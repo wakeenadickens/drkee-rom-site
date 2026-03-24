@@ -1,0 +1,2741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflections of Me · ROM</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Didact+Gothic&family=Tenor+Sans&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --obsidian:#080A0F;
+  --obsidian2:#0E1118;
+  --obsidian3:#141820;
+  --obsidian4:#1C2130;
+  --cream:#F4EFE8;
+  --cream2:#E8E0D4;
+  --cream3:#D4C9B8;
+  --gold:#D4AF6A;
+  --gold2:#E8CC8A;
+  --gold3:#B8943E;
+  --gold-glow:rgba(212,175,106,0.12);
+  --gold-glow2:rgba(212,175,106,0.06);
+  --rose:#C47B8A;
+  --rose-dim:rgba(196,123,138,0.15);
+  --sage:#7BA68A;
+  --sage-dim:rgba(123,166,138,0.15);
+  --lavender:#9B8FC4;
+  --lavender-dim:rgba(155,143,196,0.15);
+  --sky:#6B9EC4;
+  --amber:#C49B6B;
+  --font-display:'Playfair Display',serif;
+  --font-ui:'Tenor Sans',sans-serif;
+  --font-body:'Didact Gothic',sans-serif;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--obsidian);
+  color:var(--cream);
+  font-family:var(--font-body);
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:default;
+}
+
+/* ── CANVAS BACKGROUND ── */
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.7}
+
+/* ── SPLASH SCREEN ── */
+#splash{
+  position:fixed;inset:0;z-index:100;
+  background:var(--obsidian);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 1.2s ease, visibility 1.2s ease;
+}
+#splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.splash-rom{
+  font-family:var(--font-display);
+  font-size:clamp(56px,12vw,96px);
+  font-weight:400;
+  letter-spacing:0.25em;
+  color:var(--gold);
+  text-align:center;
+  animation:splash-glow 3s ease-in-out infinite;
+}
+.splash-tagline{
+  font-family:var(--font-ui);
+  font-size:13px;
+  letter-spacing:0.5em;
+  text-transform:uppercase;
+  color:var(--cream3);
+  opacity:0.6;
+  margin-top:16px;
+  text-align:center;
+}
+.splash-divider{
+  width:1px;height:60px;
+  background:linear-gradient(180deg,transparent,var(--gold),transparent);
+  margin:32px auto;
+}
+.splash-enter{
+  font-family:var(--font-ui);
+  font-size:11px;
+  letter-spacing:0.4em;
+  text-transform:uppercase;
+  color:var(--gold);
+  background:transparent;
+  border:1px solid rgba(212,175,106,0.35);
+  padding:14px 40px;
+  cursor:pointer;
+  transition:all 0.3s;
+  animation:pulse-btn 2s ease-in-out infinite;
+}
+.splash-enter:hover{background:var(--gold-glow);border-color:var(--gold)}
+@keyframes splash-glow{0%,100%{text-shadow:0 0 40px rgba(212,175,106,0.3)}50%{text-shadow:0 0 80px rgba(212,175,106,0.6),0 0 120px rgba(212,175,106,0.2)}}
+@keyframes pulse-btn{0%,100%{opacity:0.7}50%{opacity:1}}
+
+/* ── APP SHELL ── */
+#app{position:relative;z-index:1;opacity:0;transition:opacity 1s ease}
+#app.visible{opacity:1}
+
+/* ── NAVIGATION ── */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(8,10,15,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(212,175,106,0.1);
+  padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.nav-brand{
+  display:flex;align-items:center;gap:12px;
+}
+.nav-rom{
+  font-family:var(--font-display);
+  font-size:22px;
+  font-weight:400;
+  letter-spacing:0.15em;
+  color:var(--gold);
+}
+.nav-full{
+  font-family:var(--font-ui);
+  font-size:9px;
+  letter-spacing:0.35em;
+  text-transform:uppercase;
+  color:var(--cream3);
+  opacity:0.4;
+  padding-top:2px;
+}
+.nav-links{
+  display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;
+}
+.nav-btn{
+  font-family:var(--font-ui);
+  font-size:9px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--cream3);
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  padding:6px 10px;
+  opacity:0.5;
+  transition:all 0.2s;
+  border-radius:1px;
+}
+.nav-btn:hover,.nav-btn.active{opacity:1;color:var(--gold);background:var(--gold-glow2)}
+
+/* ── HERO ── */
+.hero{
+  text-align:center;
+  padding:80px 24px 60px;
+  position:relative;
+}
+.hero-eyebrow{
+  font-family:var(--font-ui);
+  font-size:10px;
+  letter-spacing:0.5em;
+  text-transform:uppercase;
+  color:var(--gold);
+  opacity:0.6;
+  margin-bottom:20px;
+}
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(36px,7vw,64px);
+  font-weight:400;
+  line-height:1.15;
+  color:var(--cream);
+}
+.hero-title em{
+  font-style:italic;
+  color:var(--gold2);
+}
+.hero-sub{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:clamp(14px,2vw,18px);
+  color:var(--cream3);
+  opacity:0.6;
+  margin-top:14px;
+  letter-spacing:0.05em;
+}
+.hero-ornament{
+  display:flex;align-items:center;gap:20px;
+  justify-content:center;
+  margin-top:28px;
+}
+.hero-ornament::before,.hero-ornament::after{
+  content:'';flex:1;max-width:120px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,106,0.4));
+}
+.hero-ornament::after{background:linear-gradient(90deg,rgba(212,175,106,0.4),transparent)}
+.hero-ornament span{font-size:10px;color:var(--gold);opacity:0.5;letter-spacing:8px}
+
+/* ── GRID LAYOUT ── */
+.page{max-width:760px;margin:0 auto;padding:0 20px 100px}
+
+/* ── MODULE CARDS ── */
+.module{
+  background:linear-gradient(145deg,rgba(28,33,48,0.6),rgba(14,17,24,0.8));
+  border:1px solid rgba(212,175,106,0.1);
+  border-radius:3px;
+  margin-bottom:20px;
+  overflow:hidden;
+  position:relative;
+  transition:border-color 0.3s;
+}
+.module:hover{border-color:rgba(212,175,106,0.2)}
+.module::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,106,0.4),transparent);
+}
+.module-header{
+  padding:24px 28px 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.module-tag{
+  font-family:var(--font-ui);
+  font-size:9px;
+  letter-spacing:0.4em;
+  text-transform:uppercase;
+  color:var(--gold);
+  opacity:0.55;
+  display:flex;align-items:center;gap:10px;
+}
+.module-tag::before{
+  content:'';width:20px;height:1px;
+  background:rgba(212,175,106,0.35);
+}
+.module-body{padding:20px 28px 28px}
+
+/* ── BREATHWORK ── */
+.breath-stage{text-align:center;padding:12px 0 24px}
+.orb-container{
+  position:relative;width:200px;height:200px;
+  margin:0 auto 24px;
+}
+.orb-pulse{
+  position:absolute;border-radius:50%;
+  border:1px solid rgba(212,175,106,0.15);
+  animation:orb-ring 3s ease-in-out infinite;
+}
+.orb-pulse:nth-child(1){inset:0;animation-delay:0s}
+.orb-pulse:nth-child(2){inset:-14px;animation-delay:0.4s;border-color:rgba(212,175,106,0.08)}
+.orb-pulse:nth-child(3){inset:-28px;animation-delay:0.8s;border-color:rgba(212,175,106,0.04)}
+.orb-core{
+  position:absolute;inset:18px;
+  border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,
+    rgba(155,143,196,0.5) 0%,
+    rgba(107,158,196,0.3) 40%,
+    rgba(8,10,15,0.9) 100%);
+  border:1px solid rgba(212,175,106,0.3);
+  cursor:pointer;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+  transition:transform 0.3s;
+  box-shadow:inset 0 0 30px rgba(155,143,196,0.2),0 0 40px rgba(107,158,196,0.1);
+}
+.orb-core:hover{transform:scale(1.04)}
+.orb-icon{font-size:22px;color:var(--gold2);opacity:0.8}
+.orb-word{
+  font-family:var(--font-display);
+  font-size:10px;font-style:italic;
+  color:var(--gold);letter-spacing:0.15em;
+  opacity:0;transition:opacity 0.4s;
+}
+.orb-word.show{opacity:1}
+.breath-guide{
+  font-family:var(--font-ui);
+  font-size:10px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--cream3);opacity:0.4;
+}
+.breath-pattern-row{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;
+}
+.pattern-btn{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  padding:8px 14px;background:transparent;
+  border:1px solid rgba(212,175,106,0.2);
+  color:var(--cream3);cursor:pointer;
+  transition:all 0.2s;opacity:0.6;
+}
+.pattern-btn:hover,.pattern-btn.active{
+  opacity:1;color:var(--gold);
+  border-color:var(--gold);background:var(--gold-glow);
+}
+@keyframes orb-ring{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+.orb-inhale{animation:grow-orb 4s ease-in-out forwards!important}
+.orb-exhale{animation:shrink-orb 6s ease-in-out forwards!important}
+.orb-hold{animation:hold-orb 2s ease-in-out forwards!important}
+@keyframes grow-orb{from{transform:scale(1);box-shadow:inset 0 0 30px rgba(155,143,196,0.2),0 0 40px rgba(107,158,196,0.1)}to{transform:scale(1.22);box-shadow:inset 0 0 60px rgba(155,143,196,0.5),0 0 80px rgba(155,143,196,0.25)}}
+@keyframes shrink-orb{from{transform:scale(1.22);box-shadow:inset 0 0 60px rgba(155,143,196,0.5),0 0 80px rgba(155,143,196,0.25)}to{transform:scale(1);box-shadow:inset 0 0 30px rgba(155,143,196,0.2),0 0 40px rgba(107,158,196,0.1)}}
+@keyframes hold-orb{0%,100%{transform:scale(1.22)}50%{transform:scale(1.24)}}
+
+/* ── MIRROR / AFFIRMATIONS ── */
+.mirror-display{
+  text-align:center;
+  min-height:160px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;
+}
+.mirror-quote{
+  font-family:var(--font-display);
+  font-size:clamp(18px,3vw,26px);
+  font-weight:400;font-style:italic;
+  line-height:1.55;
+  color:var(--cream);
+  max-width:540px;
+  transition:opacity 0.7s ease,transform 0.7s ease;
+}
+.mirror-quote.out{opacity:0;transform:translateY(-10px) scale(0.98)}
+.mirror-source{
+  font-family:var(--font-ui);
+  font-size:9px;letter-spacing:0.35em;text-transform:uppercase;
+  color:var(--gold);opacity:0.4;margin-top:14px;
+}
+.mirror-filters{
+  display:flex;gap:8px;flex-wrap:wrap;
+  justify-content:center;margin:20px 0 0;
+}
+.mirror-controls{
+  display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;
+}
+.ctrl-btn{
+  background:transparent;border:1px solid rgba(212,175,106,0.25);
+  color:var(--gold);font-size:16px;
+  width:38px;height:38px;
+  border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;line-height:1;
+}
+.ctrl-btn:hover{background:var(--gold-glow);border-color:var(--gold)}
+.auto-toggle{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--cream3);opacity:0.4;cursor:pointer;
+  background:transparent;border:none;
+  transition:opacity 0.2s;padding:4px 8px;
+}
+.auto-toggle:hover,.auto-toggle.on{opacity:1;color:var(--gold)}
+
+/* ── TAG / PILL BUTTONS ── */
+.tag-btn{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  padding:7px 14px;background:transparent;
+  border:1px solid rgba(212,175,106,0.18);
+  color:var(--cream3);cursor:pointer;
+  transition:all 0.2s;opacity:0.55;border-radius:1px;
+}
+.tag-btn:hover,.tag-btn.active{
+  opacity:1;color:var(--gold);
+  border-color:rgba(212,175,106,0.5);
+  background:var(--gold-glow);
+}
+
+/* ── TEXT INPUTS ── */
+.rom-input{
+  width:100%;background:rgba(255,255,255,0.02);
+  border:none;border-bottom:1px solid rgba(212,175,106,0.2);
+  color:var(--cream);font-family:var(--font-display);
+  font-style:italic;font-size:17px;
+  padding:10px 0;outline:none;
+  caret-color:var(--gold);
+  transition:border-color 0.3s;
+}
+.rom-input::placeholder{color:rgba(244,239,232,0.18)}
+.rom-input:focus{border-color:rgba(212,175,106,0.5)}
+.rom-textarea{
+  width:100%;min-height:130px;resize:vertical;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(212,175,106,0.1);
+  border-radius:2px;
+  color:var(--cream);font-family:var(--font-display);
+  font-style:italic;font-size:16px;line-height:1.8;
+  padding:14px 16px;outline:none;
+  caret-color:var(--gold);
+  transition:border-color 0.3s;
+}
+.rom-textarea::placeholder{color:rgba(244,239,232,0.18)}
+.rom-textarea:focus{border-color:rgba(212,175,106,0.3)}
+
+/* ── AI RESPONSE ── */
+.ai-response{
+  margin-top:20px;
+  padding:18px 20px;
+  background:rgba(212,175,106,0.04);
+  border-left:2px solid rgba(212,175,106,0.35);
+  font-family:var(--font-display);
+  font-style:italic;font-size:15px;line-height:1.8;
+  color:var(--cream2);
+  display:none;
+  border-radius:0 2px 2px 0;
+  white-space:pre-wrap;
+}
+.ai-response.show{display:block;animation:fadeUp 0.5s ease}
+
+/* ── ACTION BUTTONS ── */
+.rom-btn{
+  font-family:var(--font-ui);font-size:10px;
+  letter-spacing:0.3em;text-transform:uppercase;
+  padding:12px 24px;background:transparent;
+  border:1px solid rgba(212,175,106,0.3);
+  color:var(--gold);cursor:pointer;
+  transition:all 0.25s;border-radius:1px;
+}
+.rom-btn:hover{background:var(--gold-glow);border-color:var(--gold)}
+.rom-btn.primary{
+  background:linear-gradient(135deg,rgba(212,175,106,0.15),rgba(212,175,106,0.06));
+  border-color:rgba(212,175,106,0.45);
+  width:100%;margin-top:14px;padding:14px;
+  font-size:10px;
+}
+.rom-btn.primary:hover{background:linear-gradient(135deg,rgba(212,175,106,0.25),rgba(212,175,106,0.12))}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+/* ── GRATITUDE ── */
+.gratitude-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(212,175,106,0.07);
+  animation:fadeUp 0.4s ease;
+}
+.g-num{
+  font-family:var(--font-display);font-size:12px;
+  color:var(--gold);opacity:0.35;min-width:18px;margin-top:2px;
+}
+.g-text{
+  font-family:var(--font-display);font-style:italic;
+  font-size:15px;line-height:1.55;color:var(--cream2);flex:1;
+}
+.g-del{
+  background:none;border:none;color:rgba(212,175,106,0.25);
+  cursor:pointer;font-size:15px;padding:0;
+  transition:color 0.2s;line-height:1;margin-top:1px;
+}
+.g-del:hover{color:rgba(212,175,106,0.6)}
+.g-input-row{display:flex;align-items:center;gap:10px;margin-top:12px}
+.g-add{
+  background:none;border:none;
+  color:var(--gold);font-size:22px;
+  cursor:pointer;opacity:0.5;transition:opacity 0.2s;padding:0;line-height:1;
+}
+.g-add:hover{opacity:1}
+
+/* ── MOON ── */
+.moon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.moon-card{
+  text-align:center;padding:16px 8px;
+  border:1px solid rgba(212,175,106,0.1);
+  cursor:pointer;transition:all 0.25s;border-radius:2px;
+}
+.moon-card:hover,.moon-card.sel{
+  border-color:rgba(212,175,106,0.4);
+  background:var(--gold-glow);
+}
+.moon-sym{font-size:30px;display:block;margin-bottom:7px}
+.moon-nm{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);opacity:0.6;
+}
+.moon-wisdom{
+  margin-top:18px;padding:16px 18px;
+  border-left:2px solid rgba(212,175,106,0.3);
+  background:rgba(212,175,106,0.03);
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;line-height:1.75;color:var(--cream2);
+  display:none;border-radius:0 2px 2px 0;
+}
+.moon-wisdom.show{display:block;animation:fadeUp 0.4s ease}
+.moon-crystal{
+  margin-top:10px;
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--gold);opacity:0.5;
+}
+
+/* ── CHAKRAS ── */
+.chakra-list{display:flex;flex-direction:column;gap:8px}
+.chakra-row-item{
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:2px;overflow:hidden;
+}
+.chakra-header{
+  display:flex;align-items:center;gap:14px;
+  padding:13px 16px;cursor:pointer;
+  transition:background 0.2s;
+}
+.chakra-header:hover,.chakra-header.open{background:rgba(255,255,255,0.02)}
+.chakra-orb{
+  width:22px;height:22px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 10px currentColor;
+}
+.chakra-label{
+  font-family:var(--font-ui);font-size:11px;
+  letter-spacing:0.15em;text-transform:uppercase;
+  flex:1;
+}
+.chakra-skt{
+  font-family:var(--font-display);font-style:italic;
+  font-size:12px;color:var(--cream3);opacity:0.45;
+}
+.chakra-expand{
+  font-size:14px;color:var(--gold);opacity:0.4;
+  transition:transform 0.3s;
+}
+.chakra-header.open .chakra-expand{transform:rotate(180deg);opacity:0.8}
+.chakra-body{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.4s ease,padding 0.3s;
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;line-height:1.75;color:var(--cream2);
+  padding:0 16px 0 52px;
+}
+.chakra-body.open{max-height:200px;padding:12px 16px 16px 52px}
+.chakra-affirm{
+  margin-top:8px;
+  font-family:var(--font-display);
+  font-size:13px;color:var(--gold2);opacity:0.7;font-style:italic;
+}
+
+/* ── NUMEROLOGY ── */
+.num-input-wrap{
+  display:flex;gap:0;margin-bottom:20px;
+}
+.num-result{
+  text-align:center;padding:8px 0 4px;display:none;
+}
+.num-result.show{display:block;animation:fadeUp 0.5s ease}
+.life-number{
+  font-family:var(--font-display);font-size:80px;font-weight:400;
+  color:var(--gold);line-height:1;
+  text-shadow:0 0 50px rgba(212,175,106,0.35);
+}
+.life-num-label{
+  font-family:var(--font-ui);font-size:10px;
+  letter-spacing:0.35em;text-transform:uppercase;
+  color:var(--cream3);opacity:0.5;margin-top:6px;
+}
+.life-meaning{
+  font-family:var(--font-display);font-style:italic;
+  font-size:15px;line-height:1.75;color:var(--cream2);
+  margin-top:14px;max-width:500px;margin-left:auto;margin-right:auto;
+}
+.num-tabs{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  margin:16px 0 8px;
+}
+.num-tab-content{
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;line-height:1.75;color:var(--cream2);
+  text-align:center;padding:8px 0;
+  display:none;
+}
+.num-tab-content.show{display:block;animation:fadeUp 0.3s ease}
+
+/* ── MALA ── */
+.mala-center{text-align:center}
+.mala-mantra-display{
+  font-family:var(--font-display);font-style:italic;
+  font-size:18px;color:var(--cream2);opacity:0.7;
+  margin:8px 0 20px;
+  min-height:28px;
+}
+.mala-num{
+  font-family:var(--font-display);font-size:68px;font-weight:400;
+  color:var(--cream);line-height:1;
+}
+.mala-sub{
+  font-family:var(--font-ui);font-size:10px;
+  letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--gold);opacity:0.45;margin-top:4px;
+}
+.beads-grid{
+  display:flex;flex-wrap:wrap;
+  justify-content:center;gap:4px;
+  margin:18px 0;max-width:420px;margin-left:auto;margin-right:auto;
+}
+.bead{
+  width:16px;height:16px;border-radius:50%;
+  background:rgba(212,175,106,0.1);
+  border:1px solid rgba(212,175,106,0.2);
+  transition:all 0.15s;
+}
+.bead.lit{
+  background:var(--gold);
+  border-color:var(--gold2);
+  box-shadow:0 0 6px rgba(212,175,106,0.5);
+}
+.mala-tap{
+  width:96px;height:96px;border-radius:50%;
+  background:radial-gradient(circle at 38% 35%,rgba(212,175,106,0.18),rgba(212,175,106,0.04));
+  border:1px solid rgba(212,175,106,0.35);
+  color:var(--gold);
+  font-family:var(--font-display);font-size:12px;
+  letter-spacing:0.15em;
+  cursor:pointer;transition:all 0.12s;
+  margin:0 auto;display:block;
+}
+.mala-tap:active{transform:scale(0.93);background:radial-gradient(circle at 38% 35%,rgba(212,175,106,0.3),rgba(212,175,106,0.1))}
+.mala-rounds{
+  font-family:var(--font-ui);font-size:10px;
+  letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--gold);opacity:0.45;margin-top:12px;
+  min-height:20px;
+}
+
+/* ── TIMER ── */
+.timer-face{
+  font-family:var(--font-display);font-size:60px;font-weight:400;
+  color:var(--cream);text-align:center;letter-spacing:0.05em;
+  margin:8px 0;
+}
+.timer-presets{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.timer-ctrls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* ── SCRIPTING / VISION BOARD ── */
+.vision-prompts{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;
+}
+.prompt-chip{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.15em;text-transform:uppercase;
+  padding:6px 12px;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(212,175,106,0.15);
+  color:var(--cream3);cursor:pointer;
+  transition:all 0.2s;border-radius:1px;opacity:0.6;
+}
+.prompt-chip:hover{opacity:1;color:var(--gold);border-color:rgba(212,175,106,0.4);background:var(--gold-glow)}
+.saved-scripts{margin-top:16px}
+.saved-script-item{
+  padding:12px 0;
+  border-bottom:1px solid rgba(212,175,106,0.08);
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;line-height:1.6;color:var(--cream2);
+  animation:fadeUp 0.3s ease;
+}
+.saved-date{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);opacity:0.35;
+  display:block;margin-bottom:5px;
+}
+
+/* ── SOUND BATH ── */
+.sound-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sound-btn{
+  aspect-ratio:1;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(212,175,106,0.1);
+  cursor:pointer;transition:all 0.25s;border-radius:2px;
+  padding:16px 8px;
+}
+.sound-btn:hover,.sound-btn.playing{
+  border-color:rgba(212,175,106,0.35);
+  background:var(--gold-glow);
+}
+.sound-icon{font-size:24px}
+.sound-label{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);opacity:0.6;text-align:center;
+}
+.sound-note{
+  font-family:var(--font-display);font-style:italic;
+  font-size:12px;color:var(--cream3);opacity:0.4;
+}
+
+/* ── DAILY ORACLE ── */
+.oracle-card{
+  min-height:160px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:24px 0 8px;
+}
+.oracle-symbol{
+  font-family:var(--font-display);font-size:48px;
+  color:var(--gold);margin-bottom:14px;
+  animation:gentle-float 4s ease-in-out infinite;
+}
+.oracle-msg{
+  font-family:var(--font-display);font-style:italic;
+  font-size:clamp(16px,2.5vw,22px);line-height:1.55;
+  color:var(--cream);max-width:500px;
+  transition:opacity 0.6s,transform 0.6s;
+}
+.oracle-msg.out{opacity:0;transform:scale(0.97)}
+.oracle-theme{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.35em;text-transform:uppercase;
+  color:var(--gold);opacity:0.4;margin-top:12px;
+}
+@keyframes gentle-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* ── TYPING DOTS ── */
+.dots span{
+  display:inline-block;width:5px;height:5px;
+  border-radius:50%;background:var(--gold);
+  animation:dot 1.2s ease-in-out infinite;
+  margin:0 2px;opacity:0.4;
+}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,80%,100%{transform:scale(0.6);opacity:.3}40%{transform:scale(1);opacity:.9}}
+
+/* ── UTILITY ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.section-label{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.4em;text-transform:uppercase;
+  color:var(--gold);opacity:0.5;margin-bottom:4px;
+}
+.spacer{height:16px}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--obsidian2)}
+::-webkit-scrollbar-thumb{background:rgba(212,175,106,0.25);border-radius:2px}
+
+/* ── 7 KEYS ── */
+.keys-intro{
+  font-family:var(--font-display);font-style:italic;
+  font-size:15px;line-height:1.8;color:var(--cream2);
+  opacity:0.75;margin-bottom:28px;
+}
+.keys-grid{
+  display:grid;grid-template-columns:1fr;gap:12px;
+}
+.key-card{
+  border:1px solid rgba(212,175,106,0.12);
+  border-radius:3px;overflow:hidden;
+  transition:border-color 0.3s;
+  position:relative;
+}
+.key-card:hover{border-color:rgba(212,175,106,0.3)}
+.key-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  opacity:0;transition:opacity 0.3s;
+}
+.key-card.open::before{opacity:1}
+.key-card-header{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 20px;cursor:pointer;
+  transition:background 0.2s;
+}
+.key-card-header:hover,.key-card.open .key-card-header{
+  background:rgba(255,255,255,0.02);
+}
+.key-num{
+  font-family:var(--font-display);font-size:13px;font-weight:500;
+  min-width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.key-title{
+  font-family:var(--font-ui);font-size:11px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  flex:1;line-height:1.3;
+}
+.key-subtitle{
+  font-family:var(--font-display);font-style:italic;
+  font-size:12px;color:var(--cream3);opacity:0.45;
+}
+.key-arrow{
+  font-size:13px;color:var(--gold);opacity:0.35;
+  transition:transform 0.35s,opacity 0.25s;flex-shrink:0;
+}
+.key-card.open .key-arrow{transform:rotate(180deg);opacity:0.8}
+.key-body{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.45s ease;
+}
+.key-body.open{max-height:800px}
+.key-body-inner{
+  padding:0 20px 22px 62px;
+}
+.key-description{
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;line-height:1.8;color:var(--cream2);
+  margin-bottom:14px;
+}
+.key-affirmation{
+  font-family:var(--font-display);font-style:italic;
+  font-size:15px;line-height:1.6;
+  border-left:2px solid;padding:10px 14px;
+  margin-bottom:14px;border-radius:0 2px 2px 0;
+}
+.key-prompts-label{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--gold);opacity:0.5;margin-bottom:10px;
+}
+.key-prompts{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.key-prompt{
+  font-family:var(--font-display);font-style:italic;
+  font-size:13px;color:var(--cream3);opacity:0.7;
+  padding-left:12px;border-left:1px solid rgba(212,175,106,0.2);
+  line-height:1.5;
+}
+.key-journal{
+  width:100%;background:rgba(255,255,255,0.02);
+  border:1px solid rgba(212,175,106,0.1);border-radius:2px;
+  color:var(--cream);font-family:var(--font-display);
+  font-style:italic;font-size:14px;line-height:1.75;
+  padding:12px 14px;outline:none;resize:vertical;min-height:80px;
+  caret-color:var(--gold);transition:border-color 0.3s;
+  margin-bottom:10px;
+}
+.key-journal::placeholder{color:rgba(244,239,232,0.18)}
+.key-journal:focus{border-color:rgba(212,175,106,0.3)}
+.key-ai-btn{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.22em;text-transform:uppercase;
+  padding:9px 16px;background:transparent;
+  border:1px solid rgba(212,175,106,0.25);
+  color:var(--gold);cursor:pointer;
+  transition:all 0.2s;border-radius:1px;
+}
+.key-ai-btn:hover{background:var(--gold-glow);border-color:var(--gold)}
+.key-ai-response{
+  margin-top:12px;padding:14px 16px;
+  background:rgba(212,175,106,0.04);
+  border-left:2px solid rgba(212,175,106,0.3);
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;line-height:1.8;color:var(--cream2);
+  display:none;border-radius:0 2px 2px 0;white-space:pre-wrap;
+}
+.key-ai-response.show{display:block;animation:fadeUp 0.4s ease}
+
+/* ── COACHING CTA ── */
+.coaching-cta{
+  margin-top:32px;
+  background:linear-gradient(135deg,rgba(212,175,106,0.08),rgba(212,175,106,0.03));
+  border:1px solid rgba(212,175,106,0.25);
+  border-radius:3px;
+  padding:32px 28px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.coaching-cta::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.coaching-crown{
+  font-size:10px;letter-spacing:14px;
+  color:var(--gold);opacity:0.4;margin-bottom:16px;
+}
+.coaching-title{
+  font-family:var(--font-display);
+  font-size:clamp(20px,3.5vw,28px);
+  font-weight:400;line-height:1.3;
+  color:var(--cream);margin-bottom:8px;
+}
+.coaching-title em{font-style:italic;color:var(--gold2)}
+.coaching-subtitle{
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;color:var(--cream3);opacity:0.6;
+  margin-bottom:6px;line-height:1.6;
+}
+.coaching-tagline{
+  font-family:var(--font-ui);font-size:10px;
+  letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--gold);opacity:0.5;margin-bottom:24px;
+}
+.coaching-features{
+  display:flex;flex-wrap:wrap;gap:10px;
+  justify-content:center;margin-bottom:28px;
+}
+.coaching-feature{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.18em;text-transform:uppercase;
+  padding:7px 14px;
+  border:1px solid rgba(212,175,106,0.2);
+  color:var(--cream3);opacity:0.7;border-radius:1px;
+}
+.coaching-book-btn{
+  display:inline-block;
+  font-family:var(--font-ui);font-size:11px;
+  letter-spacing:0.35em;text-transform:uppercase;
+  color:var(--obsidian);
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  border:none;padding:16px 44px;
+  cursor:pointer;transition:all 0.3s;
+  border-radius:1px;
+  text-decoration:none;
+  box-shadow:0 4px 30px rgba(212,175,106,0.2);
+}
+.coaching-book-btn:hover{
+  background:linear-gradient(135deg,#f0d898,var(--gold2));
+  box-shadow:0 6px 40px rgba(212,175,106,0.35);
+  transform:translateY(-1px);
+}
+.coaching-note{
+  font-family:var(--font-display);font-style:italic;
+  font-size:12px;color:var(--cream3);opacity:0.4;
+  margin-top:16px;
+}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:40px 20px 60px;
+  position:relative;z-index:1;
+}
+.footer-rom{
+  font-family:var(--font-display);font-size:28px;
+  color:var(--gold);opacity:0.15;letter-spacing:0.3em;
+}
+.footer-line{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.35em;text-transform:uppercase;
+  color:var(--cream3);opacity:0.2;margin-top:8px;
+}
+
+@media(max-width:540px){
+  nav{padding:0 16px}
+  .nav-links{display:none}
+  .module-body,.module-header{padding-left:20px;padding-right:20px}
+  .moon-grid{grid-template-columns:repeat(2,1fr)}
+  .sound-grid{grid-template-columns:repeat(3,1fr)}
+  .life-number{font-size:64px}
+  .hero{padding:60px 20px 48px}
+}
+
+/* ── PASSWORD GATE ── */
+#pwGate{
+  position:fixed;inset:0;z-index:200;
+  background:var(--obsidian);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 24px;
+  transition:opacity 1s ease,visibility 1s ease;
+}
+#pwGate.hidden{opacity:0;visibility:hidden;pointer-events:none}
+
+.pw-rom{
+  font-family:var(--font-display);
+  font-size:clamp(48px,10vw,80px);
+  font-weight:400;
+  letter-spacing:0.28em;
+  color:var(--gold);
+  animation:splash-glow 3s ease-in-out infinite;
+  text-align:center;
+}
+.pw-name{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:clamp(13px,2vw,17px);
+  color:var(--cream3);
+  opacity:0.45;
+  letter-spacing:0.12em;
+  margin-top:6px;
+  text-align:center;
+}
+.pw-divider{
+  width:1px;height:48px;
+  background:linear-gradient(180deg,transparent,rgba(212,175,106,0.5),transparent);
+  margin:28px auto;
+}
+.pw-label{
+  font-family:var(--font-ui);
+  font-size:10px;
+  letter-spacing:0.45em;
+  text-transform:uppercase;
+  color:var(--gold);
+  opacity:0.55;
+  margin-bottom:16px;
+  text-align:center;
+}
+.pw-box{
+  position:relative;
+  width:100%;
+  max-width:340px;
+}
+.pw-input{
+  width:100%;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(212,175,106,0.25);
+  border-radius:2px;
+  color:var(--cream);
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:18px;
+  letter-spacing:0.18em;
+  text-align:center;
+  padding:14px 48px 14px 20px;
+  outline:none;
+  caret-color:var(--gold);
+  transition:border-color 0.3s, box-shadow 0.3s;
+}
+.pw-input::placeholder{
+  color:rgba(244,239,232,0.2);
+  letter-spacing:0.12em;
+  font-size:15px;
+}
+.pw-input:focus{
+  border-color:rgba(212,175,106,0.55);
+  box-shadow:0 0 0 3px rgba(212,175,106,0.07);
+}
+.pw-input.shake{animation:pw-shake 0.45s ease}
+.pw-eye{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:none;
+  color:rgba(212,175,106,0.35);
+  cursor:pointer;font-size:16px;line-height:1;
+  transition:color 0.2s;padding:4px;
+}
+.pw-eye:hover{color:rgba(212,175,106,0.75)}
+.pw-submit{
+  margin-top:14px;
+  width:100%;max-width:340px;
+  font-family:var(--font-ui);
+  font-size:11px;
+  letter-spacing:0.38em;
+  text-transform:uppercase;
+  color:var(--obsidian);
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  border:none;
+  padding:15px 24px;
+  cursor:pointer;
+  border-radius:2px;
+  transition:all 0.3s;
+  box-shadow:0 4px 28px rgba(212,175,106,0.18);
+}
+.pw-submit:hover{
+  background:linear-gradient(135deg,#f2dc9e,var(--gold2));
+  box-shadow:0 6px 36px rgba(212,175,106,0.32);
+  transform:translateY(-1px);
+}
+.pw-submit:active{transform:translateY(0)}
+.pw-error{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:13px;
+  color:var(--rose);
+  margin-top:12px;
+  text-align:center;
+  opacity:0;
+  transition:opacity 0.35s;
+  min-height:20px;
+}
+.pw-error.show{opacity:1}
+.pw-attempts{
+  font-family:var(--font-ui);
+  font-size:9px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--cream3);
+  opacity:0.3;
+  margin-top:28px;
+  text-align:center;
+}
+.pw-lock{
+  font-size:20px;
+  color:var(--gold);
+  opacity:0.25;
+  margin-bottom:8px;
+  text-align:center;
+  letter-spacing:4px;
+}
+.pw-locked-msg{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:14px;
+  color:var(--cream3);
+  opacity:0.5;
+  text-align:center;
+  max-width:300px;
+  line-height:1.7;
+}
+
+@keyframes pw-shake{
+  0%,100%{transform:translateX(0)}
+  18%{transform:translateX(-10px)}
+  36%{transform:translateX(10px)}
+  54%{transform:translateX(-7px)}
+  72%{transform:translateX(7px)}
+  90%{transform:translateX(-3px)}
+}
+
+/* ── DR. KEE SECTION ── */
+.drkee-wrap{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:28px;
+  align-items:start;
+  margin-bottom:32px;
+}
+@media(max-width:560px){
+  .drkee-wrap{grid-template-columns:1fr;justify-items:center;text-align:center}
+}
+.drkee-photo-ring{
+  position:relative;
+  width:120px;height:120px;
+  flex-shrink:0;
+}
+.drkee-photo-ring::before{
+  content:'';
+  position:absolute;
+  inset:-4px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),transparent 60%,var(--gold));
+  animation:ring-spin 8s linear infinite;
+}
+@keyframes ring-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.drkee-photo{
+  position:relative;
+  width:120px;height:120px;
+  border-radius:50%;
+  overflow:hidden;
+  border:3px solid var(--obsidian);
+  background:linear-gradient(145deg,var(--obsidian3),var(--obsidian4));
+  display:flex;align-items:center;justify-content:center;
+  z-index:1;
+}
+.drkee-photo img{
+  width:100%;height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  display:block;
+}
+.drkee-photo-placeholder{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:6px;
+  width:100%;height:100%;
+  cursor:pointer;
+  transition:background 0.3s;
+}
+.drkee-photo-placeholder:hover{background:rgba(212,175,106,0.05)}
+.drkee-placeholder-icon{
+  font-size:28px;color:var(--gold);opacity:0.35;
+}
+.drkee-placeholder-text{
+  font-family:var(--font-ui);font-size:8px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);opacity:0.3;text-align:center;
+  line-height:1.4;
+}
+.drkee-name{
+  font-family:var(--font-display);
+  font-size:clamp(22px,4vw,32px);
+  font-weight:400;
+  color:var(--cream);
+  line-height:1.1;
+  margin-bottom:4px;
+}
+.drkee-title{
+  font-family:var(--font-ui);
+  font-size:10px;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--gold);
+  opacity:0.65;
+  margin-bottom:14px;
+}
+.drkee-welcome{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:15px;
+  line-height:1.85;
+  color:var(--cream2);
+  opacity:0.85;
+}
+.drkee-divider{
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,106,0.25),transparent);
+  margin:28px 0;
+}
+.drkee-pillars{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:28px;
+}
+@media(max-width:480px){.drkee-pillars{grid-template-columns:repeat(2,1fr)}}
+.drkee-pillar{
+  padding:16px 12px;
+  border:1px solid rgba(212,175,106,0.1);
+  border-radius:2px;
+  text-align:center;
+  background:rgba(255,255,255,0.015);
+  transition:all 0.25s;
+}
+.drkee-pillar:hover{
+  border-color:rgba(212,175,106,0.3);
+  background:var(--gold-glow2);
+}
+.drkee-pillar-icon{
+  font-size:20px;color:var(--gold);
+  opacity:0.6;display:block;margin-bottom:8px;
+}
+.drkee-pillar-label{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);opacity:0.55;
+  display:block;margin-bottom:5px;
+}
+.drkee-pillar-desc{
+  font-family:var(--font-display);font-style:italic;
+  font-size:12px;line-height:1.5;
+  color:var(--cream3);opacity:0.6;
+}
+.drkee-quote-block{
+  position:relative;
+  padding:22px 24px 22px 36px;
+  border-left:2px solid var(--gold);
+  background:linear-gradient(135deg,rgba(212,175,106,0.06),rgba(212,175,106,0.02));
+  border-radius:0 3px 3px 0;
+  margin-bottom:28px;
+}
+.drkee-quote-mark{
+  position:absolute;
+  top:10px;left:14px;
+  font-family:var(--font-display);
+  font-size:40px;line-height:1;
+  color:var(--gold);opacity:0.2;
+}
+.drkee-quote-text{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:clamp(15px,2.2vw,19px);
+  line-height:1.65;
+  color:var(--cream);
+}
+.drkee-quote-attr{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--gold);opacity:0.45;
+  margin-top:10px;
+}
+.drkee-mission{
+  font-family:var(--font-display);font-style:italic;
+  font-size:15px;line-height:1.85;
+  color:var(--cream2);opacity:0.8;
+  margin-bottom:24px;
+}
+.drkee-keys-label{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.4em;text-transform:uppercase;
+  color:var(--gold);opacity:0.5;
+  margin-bottom:14px;
+}
+.drkee-signature-keys{
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:8px;
+}
+.drkee-sig-key{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:12px 16px;
+  border:1px solid rgba(212,175,106,0.08);
+  border-radius:2px;
+  background:rgba(255,255,255,0.01);
+  transition:all 0.2s;
+}
+.drkee-sig-key:hover{
+  border-color:rgba(212,175,106,0.22);
+  background:rgba(212,175,106,0.03);
+}
+.drkee-sig-num{
+  font-family:var(--font-display);
+  font-size:11px;font-style:italic;
+  color:var(--gold);opacity:0.45;
+  min-width:18px;margin-top:2px;
+}
+.drkee-sig-text{
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;line-height:1.6;color:var(--cream2);
+}
+.drkee-sig-text strong{
+  font-style:normal;font-weight:500;
+  color:var(--gold2);font-size:13px;
+  display:block;margin-bottom:2px;
+  font-family:var(--font-ui);
+  letter-spacing:0.12em;text-transform:uppercase;font-size:9px;
+}
+
+/* ── KEY LOCK WALL ── */
+.key-teaser{
+  padding:0 20px 0 62px;
+  font-family:var(--font-display);font-style:italic;
+  font-size:14px;line-height:1.75;color:var(--cream3);
+  opacity:0.5;
+  /* fade out bottom edge */
+  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(180deg,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0) 100%);
+  max-height:54px;overflow:hidden;
+  margin-bottom:0;
+}
+.key-lock-wall{
+  margin:0 16px 20px;
+  border:1px solid rgba(212,175,106,0.18);
+  border-radius:3px;
+  background:linear-gradient(160deg,rgba(28,33,48,0.7),rgba(14,17,24,0.9));
+  padding:22px 20px 20px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.key-lock-wall::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,106,0.35),transparent);
+}
+.key-lock-icon{
+  font-size:22px;margin-bottom:10px;
+  display:block;opacity:0.45;color:var(--gold);
+}
+.key-lock-msg{
+  font-family:var(--font-display);font-style:italic;
+  font-size:13px;line-height:1.6;
+  color:var(--cream3);opacity:0.6;
+  margin-bottom:16px;
+}
+.key-lock-input-wrap{
+  display:flex;gap:8px;max-width:300px;margin:0 auto;
+}
+.key-lock-input{
+  flex:1;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(212,175,106,0.2);
+  border-radius:2px;
+  color:var(--cream);font-family:var(--font-display);
+  font-style:italic;font-size:14px;letter-spacing:0.12em;
+  text-align:center;padding:10px 12px;
+  outline:none;caret-color:var(--gold);
+  transition:border-color 0.3s,box-shadow 0.3s;
+}
+.key-lock-input::placeholder{color:rgba(244,239,232,0.2);font-size:13px;}
+.key-lock-input:focus{border-color:rgba(212,175,106,0.5);box-shadow:0 0 0 3px rgba(212,175,106,0.06);}
+.key-lock-input.shake{animation:pw-shake 0.4s ease;}
+.key-lock-btn{
+  font-family:var(--font-ui);font-size:9px;
+  letter-spacing:0.22em;text-transform:uppercase;
+  padding:10px 16px;
+  background:linear-gradient(135deg,rgba(212,175,106,0.18),rgba(212,175,106,0.08));
+  border:1px solid rgba(212,175,106,0.4);
+  color:var(--gold);cursor:pointer;
+  border-radius:2px;transition:all 0.2s;white-space:nowrap;
+}
+.key-lock-btn:hover{background:linear-gradient(135deg,rgba(212,175,106,0.28),rgba(212,175,106,0.14));border-color:var(--gold);}
+.key-lock-error{
+  font-family:var(--font-display);font-style:italic;
+  font-size:12px;color:var(--rose);
+  margin-top:10px;opacity:0;
+  transition:opacity 0.3s;min-height:18px;
+}
+.key-lock-error.show{opacity:1;}
+.key-unlocked-flash{
+  animation:unlocked-glow 0.7s ease forwards;
+}
+@keyframes unlocked-glow{
+  0%{box-shadow:0 0 0 0 rgba(212,175,106,0);}
+  40%{box-shadow:0 0 0 8px rgba(212,175,106,0.18);}
+  100%{box-shadow:0 0 0 0 rgba(212,175,106,0);}
+}
+</style>
+</head>
+<body>
+
+<!-- CANVAS BG -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- PASSWORD GATE -->
+<div id="pwGate">
+  <div class="pw-rom">ROM</div>
+  <div class="pw-name">Reflections of Me</div>
+  <div class="pw-divider"></div>
+  <div id="pwForm" style="display:flex;flex-direction:column;align-items:center;width:100%;">
+    <div class="pw-lock">&#128274;</div>
+    <p class="pw-label">Client Access Only</p>
+    <div class="pw-box">
+      <input class="pw-input" id="pwInput" type="password"
+        placeholder="Enter your access key"
+        onkeydown="if(event.key==='Enter')checkPassword()"
+        autocomplete="off" spellcheck="false" />
+      <button class="pw-eye" id="pwEye" onclick="togglePwVis()" title="Show / hide">&#128065;</button>
+    </div>
+    <button class="pw-submit" onclick="checkPassword()">&#10022; Enter Your Mirror</button>
+    <p class="pw-error" id="pwError">That key does not match. Please try again.</p>
+    <p class="pw-attempts" id="pwAttempts">This space is reserved for ROM coaching clients</p>
+  </div>
+  <div id="pwLocked" style="display:none;flex-direction:column;align-items:center;gap:12px;">
+    <div style="font-size:36px;color:var(--gold);opacity:0.3;">&#128274;</div>
+    <p class="pw-locked-msg">Too many incorrect attempts.<br>Please contact your coach to regain access.</p>
+  </div>
+</div>
+
+<!-- SPLASH (shown after correct password) -->
+<div id="splash" class="hidden">
+  <p class="splash-tagline">Welcome back, beloved</p>
+  <div class="splash-rom">ROM</div>
+  <p style="font-family:var(--font-display);font-style:italic;font-size:16px;color:var(--cream3);opacity:0.5;letter-spacing:0.1em;margin-top:4px;">Reflections of Me</p>
+  <div class="splash-divider"></div>
+  <button class="splash-enter" onclick="enterApp()">Enter Your Mirror</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<nav>
+  <div class="nav-brand">
+    <span class="nav-rom">ROM</span>
+    <span class="nav-full">Reflections of Me</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-btn" onclick="scrollTo('drkee')" style="color:var(--gold2);border:1px solid rgba(212,175,106,0.3);opacity:1;">Dr. Kee</button>
+    <button class="nav-btn" onclick="scrollTo('sevenkeys')" style="color:var(--gold2);border:1px solid rgba(212,175,106,0.3);opacity:1;">7 Keys</button>
+    <button class="nav-btn" onclick="scrollTo('oracle')">Oracle</button>
+    <button class="nav-btn" onclick="scrollTo('breathwork')">Breathe</button>
+    <button class="nav-btn" onclick="scrollTo('mirror')">Mirror</button>
+    <button class="nav-btn" onclick="scrollTo('intention')">Intention</button>
+    <button class="nav-btn" onclick="scrollTo('manifest')">Manifest</button>
+    <button class="nav-btn" onclick="scrollTo('gratitude')">Gratitude</button>
+    <button class="nav-btn" onclick="scrollTo('moon')">Moon</button>
+    <button class="nav-btn" onclick="scrollTo('chakra')">Chakras</button>
+    <button class="nav-btn" onclick="scrollTo('mala')">Mala</button>
+    <button class="nav-btn" onclick="scrollTo('timer')">Timer</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-eyebrow">Your Sacred Space · Est. Today</p>
+    <h1 class="hero-title">Reflections<br>of <em>Me</em></h1>
+    <p class="hero-sub">A mirror for the soul — breathe, affirm, manifest, become</p>
+    <div class="hero-ornament"><span>✦</span></div>
+  </div>
+
+  <!-- DR. KEE'S KEYS TO LIFE -->
+  <div class="module" id="drkee">
+    <div class="module-header"><span class="module-tag">Dr. Kee&#39;s Keys to Life</span></div>
+    <div class="module-body">
+
+      <!-- PHOTO + NAME + WELCOME -->
+      <div class="drkee-wrap">
+        <div class="drkee-photo-ring">
+          <div class="drkee-photo" id="drkeePhotoWrap">
+            <!-- Replace the placeholder below with: <img src="YOUR-PHOTO-URL" alt="Dr. Kee" /> -->
+            <div class="drkee-photo-placeholder" onclick="document.getElementById('drkeeFileInput').click()" title="Click to upload your photo">
+              <span class="drkee-placeholder-icon">&#9752;</span>
+              <span class="drkee-placeholder-text">Add<br>Photo</span>
+            </div>
+            <input type="file" id="drkeeFileInput" accept="image/*" style="display:none;" onchange="loadDrkeePhoto(event)" />
+          </div>
+        </div>
+        <div>
+          <div class="drkee-name">Dr. Kee</div>
+          <div class="drkee-title">Founder of ROM &middot; Mindset &amp; Transformation Strategist</div>
+          <p class="drkee-welcome">Welcome, beloved. You found your way here for a reason &mdash; and that reason is more powerful than you yet know. I created ROM as a living mirror: a sacred space where you can finally stop thinking about your life and start <em>feeling</em> your way into it. I see you. I built this for you.</p>
+        </div>
+      </div>
+
+      <div class="drkee-divider"></div>
+
+      <!-- SIGNATURE QUOTE -->
+      <div class="drkee-quote-block">
+        <span class="drkee-quote-mark">&ldquo;</span>
+        <div class="drkee-quote-text">The overthinker does not need more answers. They need permission &mdash; permission to trust the wisdom they have been carrying all along.</div>
+        <div class="drkee-quote-attr">&mdash; Dr. Kee &middot; Reflections of Me</div>
+      </div>
+
+      <!-- MISSION -->
+      <p class="drkee-mission">My mission is simple and it is sacred: to walk beside the brilliant, feeling, deeply thoughtful soul who has spent years living in their head &mdash; and help them come home to themselves. Every tool inside ROM was built with you in mind. Every key was forged from real breakthroughs, real tears, and real transformation. This is not a program. This is a returning.</p>
+
+      <!-- THREE PILLARS -->
+      <div class="drkee-keys-label">The three pillars of Dr. Kee&#39;s approach</div>
+      <div class="drkee-pillars">
+        <div class="drkee-pillar">
+          <span class="drkee-pillar-icon">&#9670;</span>
+          <span class="drkee-pillar-label">Mind</span>
+          <span class="drkee-pillar-desc">Rewire the thought patterns that keep you small</span>
+        </div>
+        <div class="drkee-pillar">
+          <span class="drkee-pillar-icon">&#10022;</span>
+          <span class="drkee-pillar-label">Soul</span>
+          <span class="drkee-pillar-desc">Reconnect to the truth that lives beneath the noise</span>
+        </div>
+        <div class="drkee-pillar">
+          <span class="drkee-pillar-icon">&#9651;</span>
+          <span class="drkee-pillar-label">Strategy</span>
+          <span class="drkee-pillar-desc">Move from clarity into aligned, courageous action</span>
+        </div>
+      </div>
+
+      <div class="drkee-divider"></div>
+
+      <!-- DR. KEE'S PERSONAL KEYS -->
+      <div class="drkee-keys-label">Dr. Kee&#39;s personal keys &mdash; words she lives by</div>
+      <div class="drkee-signature-keys">
+        <div class="drkee-sig-key">
+          <span class="drkee-sig-num">I</span>
+          <div class="drkee-sig-text"><strong>Keys to Mindset</strong>Your mind is not your enemy &mdash; it is an untrained ally. The moment you stop fighting your thoughts and start directing them, everything shifts.</div>
+        </div>
+        <div class="drkee-sig-key">
+          <span class="drkee-sig-num">II</span>
+          <div class="drkee-sig-text"><strong>Keys to Clarity</strong>Clarity does not come from thinking harder. It comes from getting honest. Ask yourself the question you have been avoiding &mdash; the answer is already there.</div>
+        </div>
+        <div class="drkee-sig-key">
+          <span class="drkee-sig-num">III</span>
+          <div class="drkee-sig-text"><strong>Keys to Knowing Your Worth</strong>You were not born questioning your value. That was learned. And everything that is learned can be unlearned. You are already enough &mdash; this work is just the remembering.</div>
+        </div>
+        <div class="drkee-sig-key">
+          <span class="drkee-sig-num">IV</span>
+          <div class="drkee-sig-text"><strong>Keys to Confidence</strong>I used to wait to feel ready. I waited a long time. The day I acted before I felt ready was the day my life changed. I want that day for you &mdash; and it can be today.</div>
+        </div>
+        <div class="drkee-sig-key">
+          <span class="drkee-sig-num">V</span>
+          <div class="drkee-sig-text"><strong>Keys to Speaking Up</strong>Your silence has a cost that only you are paying. Your voice &mdash; even trembling &mdash; is an act of leadership. Speak, love. The world needs what only you carry.</div>
+        </div>
+        <div class="drkee-sig-key">
+          <span class="drkee-sig-num">VI</span>
+          <div class="drkee-sig-text"><strong>Keys to Trusting Yourself</strong>Every time you override your gut to please someone else, you teach yourself that your knowing does not matter. It does. It always has. Come back to it.</div>
+        </div>
+        <div class="drkee-sig-key">
+          <span class="drkee-sig-num">VII</span>
+          <div class="drkee-sig-text"><strong>Keys to Transformation</strong>Transformation is not a destination. It is a daily decision to show up as the version of yourself you are still becoming. You are already on your way. Keep going.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 7 KEYS TO LIFE -->
+  <div class="module" id="sevenkeys">
+    <div class="module-header"><span class="module-tag">7 Keys to Life · ROM Toolkit</span></div>
+    <div class="module-body">
+      <p class="keys-intro">Seven sacred keys crafted for the soul who thinks deeply, feels everything, and is ready to stop living inside their own head — and start living inside their full power. Each key unlocks a door within you that was never truly closed. Only waiting.</p>
+      <div class="keys-grid" id="keysGrid"></div>
+      <div class="coaching-cta" id="coaching">
+        <div class="coaching-crown">&#10022; &middot; &#10022; &middot; &#10022;</div>
+        <h2 class="coaching-title">Ready to go deeper?<br><em>Personalized Coaching with ROM</em></h2>
+        <p class="coaching-subtitle">A customized 1:1 coaching program designed specifically for the overthinker who is ready to finally trust themselves.</p>
+        <p class="coaching-tagline">Mindset &middot; Clarity &middot; Worth &middot; Confidence &middot; Voice &middot; Trust &middot; Transformation</p>
+        <div class="coaching-features">
+          <span class="coaching-feature">1:1 Private Sessions</span>
+          <span class="coaching-feature">Custom 7 Keys Roadmap</span>
+          <span class="coaching-feature">Overthinker-Specific Tools</span>
+          <span class="coaching-feature">Ongoing ROM Support</span>
+          <span class="coaching-feature">Breakthrough Coaching</span>
+        </div>
+        <a class="coaching-book-btn" href="#" onclick="bookCoaching(event)">&#10022; Book Your Session</a>
+        <p class="coaching-note">Limited spaces available &middot; Your transformation begins with one decision</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- DAILY ORACLE -->
+  <div class="module" id="oracle">
+    <div class="module-header"><span class="module-tag">Daily Oracle</span></div>
+    <div class="module-body">
+      <div class="oracle-card">
+        <div class="oracle-symbol" id="oracleSymbol">✦</div>
+        <div class="oracle-msg" id="oracleMsg">Loading your message from the universe...</div>
+        <div class="oracle-theme" id="oracleTheme"></div>
+      </div>
+      <div class="btn-row" style="justify-content:center;margin-top:20px;">
+        <button class="rom-btn" onclick="drawOracle()">✦ Draw New Oracle</button>
+        <button class="rom-btn" onclick="aiOracle()" id="aiOracleBtn">✦ Receive Channelled Message</button>
+      </div>
+      <div class="ai-response" id="oracleAI"></div>
+    </div>
+  </div>
+
+  <!-- BREATHWORK -->
+  <div class="module" id="breathwork">
+    <div class="module-header"><span class="module-tag">Breathwork</span></div>
+    <div class="module-body">
+      <div class="breath-stage">
+        <div class="orb-container">
+          <div class="orb-pulse"></div><div class="orb-pulse"></div><div class="orb-pulse"></div>
+          <div class="orb-core" id="orbCore" onclick="startBreath()">
+            <span class="orb-icon">◎</span>
+            <span class="orb-word" id="orbWord">Begin</span>
+          </div>
+        </div>
+        <p class="breath-guide" id="breathGuide">Touch the orb to begin</p>
+      </div>
+      <div class="section-label" style="text-align:center">Choose your practice</div>
+      <div class="breath-pattern-row">
+        <button class="pattern-btn active" onclick="setPattern('box',this)">Box 4-4-4-4</button>
+        <button class="pattern-btn" onclick="setPattern('478',this)">4-7-8 Calm</button>
+        <button class="pattern-btn" onclick="setPattern('coherent',this)">Coherent 5-5</button>
+        <button class="pattern-btn" onclick="setPattern('activate',this)">Activate 6-2-6</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SACRED MIRROR -->
+  <div class="module" id="mirror">
+    <div class="module-header"><span class="module-tag">Sacred Mirror</span></div>
+    <div class="module-body">
+      <div class="mirror-display">
+        <div class="mirror-quote" id="mirrorQuote">"I am whole, worthy, and radiant with infinite possibility."</div>
+        <div class="mirror-source" id="mirrorSource">Self-Worth · ROM</div>
+      </div>
+      <div class="mirror-filters">
+        <button class="tag-btn active" onclick="setMirrorFilter('all',this)">All</button>
+        <button class="tag-btn" onclick="setMirrorFilter('love',this)">Love</button>
+        <button class="tag-btn" onclick="setMirrorFilter('abundance',this)">Abundance</button>
+        <button class="tag-btn" onclick="setMirrorFilter('healing',this)">Healing</button>
+        <button class="tag-btn" onclick="setMirrorFilter('power',this)">Power</button>
+        <button class="tag-btn" onclick="setMirrorFilter('peace',this)">Peace</button>
+        <button class="tag-btn" onclick="setMirrorFilter('spirit',this)">Spirit</button>
+      </div>
+      <div class="mirror-controls">
+        <button class="ctrl-btn" onclick="prevAffirm()" title="Previous">‹</button>
+        <button class="auto-toggle" id="autoToggle" onclick="toggleAuto()">Auto-rotate: Off</button>
+        <button class="ctrl-btn" onclick="nextAffirm()" title="Next">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTENTION -->
+  <div class="module" id="intention">
+    <div class="module-header"><span class="module-tag">Set Your Intention</span></div>
+    <div class="module-body">
+      <p style="font-family:var(--font-display);font-style:italic;font-size:14px;color:var(--cream3);opacity:0.55;margin-bottom:18px;">Speak your desire into the space between worlds</p>
+      <input class="rom-input" id="intentionInput" placeholder="I am calling in…" maxlength="220" />
+      <button class="rom-btn primary" onclick="sealIntention()">✦ Seal This Intention with ROM</button>
+      <div class="ai-response" id="intentionAI"></div>
+    </div>
+  </div>
+
+  <!-- MANIFESTATION -->
+  <div class="module" id="manifest">
+    <div class="module-header"><span class="module-tag">Manifestation Scripting</span></div>
+    <div class="module-body">
+      <p style="font-family:var(--font-display);font-style:italic;font-size:14px;color:var(--cream3);opacity:0.55;margin-bottom:14px;">Write as if it has already happened. Feel it as real.</p>
+      <div class="vision-prompts" id="scriptPrompts">
+        <button class="prompt-chip" onclick="insertPrompt('Today I am so grateful that ')">Gratitude opener</button>
+        <button class="prompt-chip" onclick="insertPrompt('I can feel the joy of ')">Feel it real</button>
+        <button class="prompt-chip" onclick="insertPrompt('My life is filled with ')">Abundance</button>
+        <button class="prompt-chip" onclick="insertPrompt('I am so happy and grateful now that ')">369 method</button>
+        <button class="prompt-chip" onclick="insertPrompt('The universe delivered ')">Past tense magic</button>
+      </div>
+      <textarea class="rom-textarea" id="scriptArea" placeholder="Today I am so grateful that my life is overflowing with…" rows="5"></textarea>
+      <div class="btn-row">
+        <button class="rom-btn" onclick="saveScript()">✦ Save to Scroll</button>
+        <button class="rom-btn" onclick="amplifyScript()" id="ampBtn">✦ Amplify with ROM</button>
+        <button class="rom-btn" onclick="clearScript()">Clear</button>
+      </div>
+      <div class="ai-response" id="scriptAI"></div>
+      <div class="saved-scripts" id="savedScripts"></div>
+    </div>
+  </div>
+
+  <!-- GRATITUDE -->
+  <div class="module" id="gratitude">
+    <div class="module-header"><span class="module-tag">Gratitude Scroll</span></div>
+    <div class="module-body">
+      <p style="font-family:var(--font-display);font-style:italic;font-size:14px;color:var(--cream3);opacity:0.55;margin-bottom:14px;">Gratitude is the highest vibration. What are you thankful for today?</p>
+      <div id="gratList"></div>
+      <div class="g-input-row">
+        <input class="rom-input" id="gratField" placeholder="I am grateful for…" maxlength="160"
+          onkeydown="if(event.key==='Enter')addGrat()" style="font-size:16px;" />
+        <button class="g-add" onclick="addGrat()" title="Add">+</button>
+      </div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="rom-btn" onclick="aiGratitude()" id="gratAIBtn">✦ ROM Gratitude Reflection</button>
+      </div>
+      <div class="ai-response" id="gratAI"></div>
+    </div>
+  </div>
+
+  <!-- MOON -->
+  <div class="module" id="moon">
+    <div class="module-header"><span class="module-tag">Moon Wisdom</span></div>
+    <div class="module-body">
+      <div class="moon-grid">
+        <div class="moon-card" onclick="selectMoon('new',this)">
+          <span class="moon-sym">🌑</span>
+          <span class="moon-nm">New Moon</span>
+        </div>
+        <div class="moon-card" onclick="selectMoon('waxing',this)">
+          <span class="moon-sym">🌒</span>
+          <span class="moon-nm">Waxing</span>
+        </div>
+        <div class="moon-card" onclick="selectMoon('full',this)">
+          <span class="moon-sym">🌕</span>
+          <span class="moon-nm">Full Moon</span>
+        </div>
+        <div class="moon-card" onclick="selectMoon('waning',this)">
+          <span class="moon-sym">🌘</span>
+          <span class="moon-nm">Waning</span>
+        </div>
+      </div>
+      <div class="moon-wisdom" id="moonWisdom">
+        <div id="moonRitual"></div>
+        <div class="moon-crystal" id="moonCrystal"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAKRAS -->
+  <div class="module" id="chakra">
+    <div class="module-header"><span class="module-tag">Chakra Alignment</span></div>
+    <div class="module-body">
+      <div class="chakra-list" id="chakraList"></div>
+    </div>
+  </div>
+
+  <!-- NUMEROLOGY -->
+  <div class="module" id="numerology">
+    <div class="module-header"><span class="module-tag">Sacred Numerology</span></div>
+    <div class="module-body">
+      <p style="font-family:var(--font-display);font-style:italic;font-size:14px;color:var(--cream3);opacity:0.55;margin-bottom:18px;">Your name holds the vibrational code of your soul's path</p>
+      <input class="rom-input" id="numName" placeholder="Enter your full birth name…"
+        oninput="calcNum()" style="text-align:center;letter-spacing:0.08em;font-size:18px;" />
+      <div class="num-result" id="numResult">
+        <div class="life-number" id="lifeNum"></div>
+        <div class="life-num-label" id="lifeLabel"></div>
+        <div class="num-tabs">
+          <button class="tag-btn active" onclick="showNumTab('path',this)">Life Path</button>
+          <button class="tag-btn" onclick="showNumTab('expression',this)">Expression</button>
+          <button class="tag-btn" onclick="showNumTab('soul',this)">Soul Urge</button>
+        </div>
+        <div class="num-tab-content show" id="tab-path"><div class="life-meaning" id="pathMeaning"></div></div>
+        <div class="num-tab-content" id="tab-expression"><div class="life-meaning" id="expMeaning"></div></div>
+        <div class="num-tab-content" id="tab-soul"><div class="life-meaning" id="soulMeaning"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MALA / MANTRA -->
+  <div class="module" id="mala">
+    <div class="module-header"><span class="module-tag">Japa Mala · Mantra Counter</span></div>
+    <div class="module-body">
+      <div class="mala-center">
+        <input class="rom-input" id="mantraIn" value="Om Namah Shivaya"
+          oninput="document.getElementById('mantraDisplay').textContent=this.value||'Om Namah Shivaya'"
+          style="text-align:center;margin-bottom:8px;font-size:17px;" />
+        <p class="mala-mantra-display" id="mantraDisplay">Om Namah Shivaya</p>
+        <div class="mala-num" id="malaNum">0</div>
+        <div class="mala-sub" id="malaSub">0 / 108 beads</div>
+        <div class="beads-grid" id="beadsGrid"></div>
+        <button class="mala-tap" onclick="tapBead()">Tap</button>
+        <div class="btn-row" style="justify-content:center;margin-top:14px;">
+          <button class="rom-btn" onclick="resetMala()">Reset</button>
+          <button class="rom-btn" onclick="finishRound()">Complete Round</button>
+        </div>
+        <p class="mala-rounds" id="malaRounds"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOUND BATH -->
+  <div class="module" id="soundbath">
+    <div class="module-header"><span class="module-tag">Sound Bath · Solfeggio Frequencies</span></div>
+    <div class="module-body">
+      <p style="font-family:var(--font-display);font-style:italic;font-size:14px;color:var(--cream3);opacity:0.55;margin-bottom:18px;">Sacred tones generated with binaural precision for healing and alignment</p>
+      <div class="sound-grid" id="soundGrid"></div>
+      <div class="btn-row" style="margin-top:16px;justify-content:center;">
+        <button class="rom-btn" onclick="stopAllSounds()">Stop All</button>
+      </div>
+      <div id="soundStatus" style="text-align:center;margin-top:10px;font-family:var(--font-display);font-style:italic;font-size:13px;color:var(--gold);opacity:0.5;min-height:20px;"></div>
+    </div>
+  </div>
+
+  <!-- MEDITATION TIMER -->
+  <div class="module" id="timer">
+    <div class="module-header"><span class="module-tag">Sacred Timer</span></div>
+    <div class="module-body">
+      <div class="timer-presets">
+        <button class="tag-btn" onclick="setTimer(3)">3 min</button>
+        <button class="tag-btn" onclick="setTimer(5)">5 min</button>
+        <button class="tag-btn" onclick="setTimer(10)">10 min</button>
+        <button class="tag-btn active" onclick="setTimer(20)">20 min</button>
+        <button class="tag-btn" onclick="setTimer(30)">30 min</button>
+        <button class="tag-btn" onclick="setTimer(45)">45 min</button>
+      </div>
+      <div class="timer-face" id="timerFace">20:00</div>
+      <div class="timer-ctrls">
+        <button class="rom-btn" id="timerBtn" onclick="toggleTimer()">Begin</button>
+        <button class="rom-btn" onclick="resetTimer()">Reset</button>
+      </div>
+      <div id="timerMsg" style="text-align:center;margin-top:16px;font-family:var(--font-display);font-style:italic;font-size:14px;color:var(--gold2);opacity:0;transition:opacity 0.5s;"></div>
+    </div>
+  </div>
+
+
+  <!-- 7 KEYS TO LIFE -->
+  <div class="module" id="sevenkeys">
+    <div class="module-header"><span class="module-tag">7 Keys to Life · ROM Toolkit</span></div>
+    <div class="module-body">
+      <p class="keys-intro">Seven sacred keys crafted for the soul who thinks deeply, feels everything, and is ready to stop living inside their own head — and start living inside their full power. Each key unlocks a door within you that was never truly closed. Only waiting.</p>
+      <div class="keys-grid" id="keysGrid"></div>
+      <div class="coaching-cta" id="coaching">
+        <div class="coaching-crown">&#10022; &middot; &#10022; &middot; &#10022;</div>
+        <h2 class="coaching-title">Ready to go deeper?<br><em>Personalized Coaching with ROM</em></h2>
+        <p class="coaching-subtitle">A customized 1:1 coaching program designed specifically for the overthinker who is ready to finally trust themselves.</p>
+        <p class="coaching-tagline">Mindset &middot; Clarity &middot; Worth &middot; Confidence &middot; Voice &middot; Trust &middot; Transformation</p>
+        <div class="coaching-features">
+          <span class="coaching-feature">1:1 Private Sessions</span>
+          <span class="coaching-feature">Custom 7 Keys Roadmap</span>
+          <span class="coaching-feature">Overthinker-Specific Tools</span>
+          <span class="coaching-feature">Ongoing ROM Support</span>
+          <span class="coaching-feature">Breakthrough Coaching</span>
+        </div>
+        <a class="coaching-book-btn" href="#" onclick="bookCoaching(event)">&#10022; Book Your Session</a>
+        <p class="coaching-note">Limited spaces available &middot; Your transformation begins with one decision</p>
+      </div>
+    </div>
+  </div>
+
+
+</div><!-- /page -->
+
+<footer>
+  <div class="footer-rom">ROM</div>
+  <p class="footer-line">Reflections of Me · Your Soul Mirror</p>
+</footer>
+
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  CANVAS BACKGROUND
+// ══════════════════════════════════════════════════════════
+const cv=document.getElementById('bgCanvas'),cx=cv.getContext('2d');
+let W,H,stars=[],nebulas=[];
+function initCanvas(){
+  W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;
+  stars=Array.from({length:260},()=>({
+    x:Math.random()*W,y:Math.random()*H,
+    r:Math.random()*1.4+0.2,
+    o:Math.random()*0.55+0.1,
+    sp:Math.random()*0.4+0.15,
+    ph:Math.random()*Math.PI*2
+  }));
+  nebulas=[
+    {x:W*0.15,y:H*0.2,r:W*0.35,c:'rgba(155,143,196,0.035)'},
+    {x:W*0.8,y:H*0.6,r:W*0.3,c:'rgba(107,158,196,0.03)'},
+    {x:W*0.5,y:H*0.85,r:W*0.25,c:'rgba(196,123,138,0.025)'},
+  ];
+}
+function drawCanvas(t){
+  cx.clearRect(0,0,W,H);
+  nebulas.forEach(n=>{
+    const g=cx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
+    g.addColorStop(0,n.c);g.addColorStop(1,'transparent');
+    cx.fillStyle=g;cx.beginPath();cx.arc(n.x,n.y,n.r,0,Math.PI*2);cx.fill();
+  });
+  stars.forEach(s=>{
+    const tw=s.o*(0.5+0.5*Math.sin(t*0.001*s.sp+s.ph));
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(244,239,232,${tw})`;cx.fill();
+  });
+  requestAnimationFrame(drawCanvas);
+}
+window.addEventListener('resize',initCanvas);
+initCanvas();requestAnimationFrame(drawCanvas);
+
+// ══════════════════════════════════════════════════════════
+//  PASSWORD GATE
+// ══════════════════════════════════════════════════════════
+
+// ┌─────────────────────────────────────────────────────┐
+// │  SET YOUR CLIENT PASSWORD BELOW (change this!)      │
+// └─────────────────────────────────────────────────────┘
+const ROM_PASSWORD = 'reflectionsofme';
+
+let pwAttempts = 0;
+const MAX_ATTEMPTS = 5;
+
+function checkPassword() {
+  if (pwAttempts >= MAX_ATTEMPTS) return;
+  const input = document.getElementById('pwInput').value.trim();
+  const errEl = document.getElementById('pwError');
+  const attEl = document.getElementById('pwAttempts');
+
+  if (input.toLowerCase() === ROM_PASSWORD.toLowerCase()) {
+    // Correct — dismiss gate, show splash
+    errEl.classList.remove('show');
+    const gate = document.getElementById('pwGate');
+    gate.classList.add('hidden');
+    const splash = document.getElementById('splash');
+    splash.classList.remove('hidden');
+    // Store session so refresh does not re-prompt this session
+    sessionStorage.setItem('rom_auth', '1');
+  } else {
+    pwAttempts++;
+    document.getElementById('pwInput').classList.add('shake');
+    setTimeout(() => document.getElementById('pwInput').classList.remove('shake'), 500);
+    document.getElementById('pwInput').value = '';
+
+    if (pwAttempts >= MAX_ATTEMPTS) {
+      document.getElementById('pwForm').style.display = 'none';
+      document.getElementById('pwLocked').style.display = 'flex';
+    } else {
+      const remaining = MAX_ATTEMPTS - pwAttempts;
+      errEl.classList.add('show');
+      attEl.textContent = remaining + ' attempt' + (remaining === 1 ? '' : 's') + ' remaining';
+    }
+  }
+}
+
+function togglePwVis() {
+  const inp = document.getElementById('pwInput');
+  const eye = document.getElementById('pwEye');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    eye.innerHTML = '&#128064;';
+  } else {
+    inp.type = 'password';
+    eye.innerHTML = '&#128065;';
+  }
+}
+
+// Check if already authenticated this session
+window.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('rom_auth') === '1') {
+    document.getElementById('pwGate').classList.add('hidden');
+    document.getElementById('splash').classList.remove('hidden');
+  }
+  document.getElementById('pwInput').focus();
+});
+
+// ══════════════════════════════════════════════════════════
+//  SPLASH → APP
+// ══════════════════════════════════════════════════════════
+function enterApp(){
+  document.getElementById('splash').classList.add('hidden');
+  const app=document.getElementById('app');
+  app.classList.add('visible');
+  drawOracle();
+  renderBeads();
+  renderChakras();
+  renderSounds();
+  renderKeys();
+}
+
+function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+
+// ══════════════════════════════════════════════════════════
+//  ORACLE
+// ══════════════════════════════════════════════════════════
+const oracles=[
+  {sym:'☽',msg:'The answers you seek already live within you. Grow still, and listen.',theme:'Inner Wisdom'},
+  {sym:'✦',msg:'You are not behind. You are exactly where the universe needs you to be.',theme:'Divine Timing'},
+  {sym:'◈',msg:'Every ending you fear is actually a threshold to something more aligned.',theme:'Transformation'},
+  {sym:'⊕',msg:'Your presence is the gift. Simply being here is an act of power.',theme:'Presence'},
+  {sym:'❋',msg:'Release the how and hold only the feeling of the wish fulfilled.',theme:'Manifestation'},
+  {sym:'◯',msg:'You are loved beyond measure by forces you cannot yet comprehend.',theme:'Love'},
+  {sym:'⋆',msg:'The version of you that already has it all is reaching back to show you the way.',theme:'Future Self'},
+  {sym:'☯',msg:'Peace is not found — it is chosen. Choose it now, in this breath.',theme:'Peace'},
+  {sym:'✧',msg:'Your vibration is rising. What once shook you is no longer a match for who you are.',theme:'Elevation'},
+  {sym:'◇',msg:'Abundance begins in the mind. Let your thoughts become fertile ground.',theme:'Abundance'},
+  {sym:'⌾',msg:'You are allowed to rest. Receiving is as sacred as giving.',theme:'Surrender'},
+  {sym:'✺',msg:'Trust the quiet voice beneath the noise. It has never once led you astray.',theme:'Intuition'},
+  {sym:'⊛',msg:'The universe is conspiring in your favour at this very moment.',theme:'Faith'},
+  {sym:'◐',msg:'Healing is not linear — your wholeness is already complete.',theme:'Healing'},
+  {sym:'✴',msg:'You are the miracle you have been waiting for.',theme:'Self-Love'},
+];
+let lastOracle=-1;
+function drawOracle(){
+  let idx;
+  do{idx=Math.floor(Math.random()*oracles.length)}while(idx===lastOracle);
+  lastOracle=idx;const o=oracles[idx];
+  const msgEl=document.getElementById('oracleMsg');
+  msgEl.classList.add('out');
+  setTimeout(()=>{
+    document.getElementById('oracleSymbol').textContent=o.sym;
+    msgEl.textContent=`"${o.msg}"`;
+    document.getElementById('oracleTheme').textContent=o.theme+' · ROM Oracle';
+    msgEl.classList.remove('out');
+  },500);
+  document.getElementById('oracleAI').classList.remove('show');
+}
+async function aiOracle(){
+  const el=document.getElementById('oracleAI');
+  el.classList.add('show');
+  el.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  const oracle=document.getElementById('oracleMsg').textContent;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`You are ROM — Reflections of Me — a wise, soulful spiritual guide. The user has drawn a daily oracle card. Offer a channelled message: a deeply personal, poetic expansion of the oracle's wisdom (3–4 sentences). Then suggest one micro-action they can take in the next hour to embody this message. Keep it intimate, warm, and mystical. No bullet points. 100 words max.`,
+        messages:[{role:'user',content:`Today's oracle: ${oracle}`}]
+      })
+    });
+    const d=await r.json();
+    el.textContent=d.content?.map(c=>c.text||'').join('')||'The stars whisper: trust yourself.';
+  }catch(e){el.textContent='The universe moves in mysterious ways. Trust what arises in the silence.'}
+}
+
+// ══════════════════════════════════════════════════════════
+//  BREATHWORK
+// ══════════════════════════════════════════════════════════
+const patterns={
+  box:{phases:[{n:'Inhale',d:4000,c:'orb-inhale'},{n:'Hold',d:4000,c:'orb-hold'},{n:'Exhale',d:4000,c:'orb-exhale'},{n:'Hold',d:4000,c:'orb-hold'}]},
+  '478':{phases:[{n:'Inhale',d:4000,c:'orb-inhale'},{n:'Hold',d:7000,c:'orb-hold'},{n:'Exhale',d:8000,c:'orb-exhale'}]},
+  coherent:{phases:[{n:'Inhale',d:5000,c:'orb-inhale'},{n:'Exhale',d:5000,c:'orb-exhale'}]},
+  activate:{phases:[{n:'Inhale',d:6000,c:'orb-inhale'},{n:'Hold',d:2000,c:'orb-hold'},{n:'Exhale',d:6000,c:'orb-exhale'}]},
+};
+let curPattern='box',breathIdx=0,breathState='idle',breathTick;
+function setPattern(p,btn){
+  curPattern=p;stopBreath();
+  document.querySelectorAll('.pattern-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function stopBreath(){
+  clearTimeout(breathTick);breathState='idle';
+  const c=document.getElementById('orbCore');
+  c.className='orb-core';
+  document.getElementById('orbWord').classList.remove('show');
+  document.getElementById('breathGuide').textContent='Touch the orb to begin';
+}
+function startBreath(){
+  if(breathState==='running'){stopBreath();return}
+  breathState='running';breathIdx=0;runBreathPhase();
+}
+function runBreathPhase(){
+  if(breathState!=='running')return;
+  const ph=patterns[curPattern].phases;
+  const p=ph[breathIdx%ph.length];
+  const c=document.getElementById('orbCore');
+  c.className='orb-core '+p.c;
+  const w=document.getElementById('orbWord');
+  w.textContent=p.n;w.classList.add('show');
+  document.getElementById('breathGuide').textContent=`${p.n} · ${p.d/1000}s`;
+  breathTick=setTimeout(()=>{
+    c.className='orb-core';
+    breathIdx++;setTimeout(runBreathPhase,80);
+  },p.d);
+}
+
+// ══════════════════════════════════════════════════════════
+//  AFFIRMATIONS / MIRROR
+// ══════════════════════════════════════════════════════════
+const affirms={
+  love:[
+    ["I am deeply loved and completely lovable just as I am.","Love · ROM"],
+    ["Love flows to me freely, abundantly, and without condition.","Love · ROM"],
+    ["I attract relationships that honour my highest truth.","Love · ROM"],
+    ["My heart is open and I am worthy of profound connection.","Love · ROM"],
+    ["I radiate love and it returns to me multiplied ten-fold.","Love · ROM"],
+    ["I am safe to love and be loved fully.","Love · ROM"],
+  ],
+  abundance:[
+    ["Abundance is my natural state and my birthright.","Abundance · ROM"],
+    ["Money, opportunity, and blessings flow to me with ease.","Abundance · ROM"],
+    ["I am a powerful magnet for wealth and prosperity.","Abundance · ROM"],
+    ["The universe conspires in my favour in every moment.","Abundance · ROM"],
+    ["I deserve every beautiful thing this life has to offer.","Abundance · ROM"],
+    ["My needs are always met and there is always more than enough.","Abundance · ROM"],
+  ],
+  healing:[
+    ["My body knows how to heal, and I support it with love.","Healing · ROM"],
+    ["I release all that no longer serves my highest good.","Healing · ROM"],
+    ["Every cell in my body vibrates with health and vitality.","Healing · ROM"],
+    ["I choose peace over fear in every sacred moment.","Healing · ROM"],
+    ["I am worthy of rest, care, and deep nourishing restoration.","Healing · ROM"],
+    ["My healing is not linear — my wholeness is already complete.","Healing · ROM"],
+  ],
+  power:[
+    ["I am whole, worthy, and radiant with infinite possibility.","Self-Worth · ROM"],
+    ["My voice matters and I speak my truth with grace and courage.","Power · ROM"],
+    ["I trust my intuition — it always guides me back home.","Intuition · ROM"],
+    ["I am the author of my own magnificent, unlimited story.","Power · ROM"],
+    ["I stand firmly in my light and my light is more than enough.","Power · ROM"],
+    ["I am not waiting to be chosen. I choose myself.","Power · ROM"],
+  ],
+  peace:[
+    ["I am at peace with where I am and excited for where I am going.","Peace · ROM"],
+    ["I release all urgency. Everything unfolds in perfect divine time.","Peace · ROM"],
+    ["My mind is calm, my heart is open, my spirit is free.","Peace · ROM"],
+    ["I breathe in peace and breathe out everything that is not mine.","Peace · ROM"],
+    ["I am enough. Right now. In this moment. Exactly as I am.","Peace · ROM"],
+  ],
+  spirit:[
+    ["I am a divine being having a sacred human experience.","Spirit · ROM"],
+    ["The universe is always speaking to me. I am always listening.","Spirit · ROM"],
+    ["I am connected to all of life — seen and unseen.","Spirit · ROM"],
+    ["My soul knows the way. I surrender and trust the journey.","Spirit · ROM"],
+    ["I am ancient, wise, and luminous beyond what my eyes can see.","Spirit · ROM"],
+  ],
+};
+let mirrorFilter='all',mirrorPool=[],mirrorIdx=0,autoInterval;
+function buildMirrorPool(f){
+  mirrorPool=f==='all'?Object.values(affirms).flat():affirms[f]||[];
+  shuffle(mirrorPool);mirrorIdx=0;
+}
+function setMirrorFilter(f,btn){
+  mirrorFilter=f;buildMirrorPool(f);
+  document.querySelectorAll('.mirror-filters .tag-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');showMirror();
+}
+function nextAffirm(){mirrorIdx=(mirrorIdx+1)%mirrorPool.length;showMirror()}
+function prevAffirm(){mirrorIdx=(mirrorIdx-1+mirrorPool.length)%mirrorPool.length;showMirror()}
+function showMirror(){
+  const q=document.getElementById('mirrorQuote');
+  q.classList.add('out');
+  setTimeout(()=>{
+    const a=mirrorPool[mirrorIdx];
+    q.textContent=`"${a[0]}"`;
+    document.getElementById('mirrorSource').textContent=a[1];
+    q.classList.remove('out');
+  },550);
+}
+function toggleAuto(){
+  const btn=document.getElementById('autoToggle');
+  if(autoInterval){clearInterval(autoInterval);autoInterval=null;btn.textContent='Auto-rotate: Off';btn.classList.remove('on')}
+  else{autoInterval=setInterval(nextAffirm,10000);btn.textContent='Auto-rotate: On';btn.classList.add('on')}
+}
+buildMirrorPool('all');
+
+// ══════════════════════════════════════════════════════════
+//  INTENTION AI
+// ══════════════════════════════════════════════════════════
+async function sealIntention(){
+  const val=document.getElementById('intentionInput').value.trim();
+  if(!val)return;
+  const el=document.getElementById('intentionAI');
+  el.classList.add('show');
+  el.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`You are ROM — Reflections of Me — a sacred spiritual guide. When a soul sets an intention, respond with three things, written as flowing prose (no bullet points or headers):
+1. A mirror affirmation: reflect their intention back in a more powerful, present-tense, poetic form (1–2 sentences)
+2. A ritual anchor: one simple embodied practice for today (1 sentence)
+3. A closing mantra: 4–6 words they can breathe with
+
+Tone: warm, mystical, deeply personal. 90 words max total.`,
+        messages:[{role:'user',content:`My intention for ROM: ${val}`}]
+      })
+    });
+    const d=await r.json();
+    el.textContent=d.content?.map(c=>c.text||'').join('')||'Your intention is received. The universe is already moving.';
+  }catch(e){el.textContent='Your intention has been sealed into the fabric of what is becoming. Hold it gently.'}
+}
+
+// ══════════════════════════════════════════════════════════
+//  MANIFESTATION SCRIPTING
+// ══════════════════════════════════════════════════════════
+let savedScripts=[];
+function insertPrompt(t){
+  const ta=document.getElementById('scriptArea');
+  ta.value+=(ta.value&&!ta.value.endsWith('\n')?'\n':'')+t;
+  ta.focus();
+}
+function saveScript(){
+  const t=document.getElementById('scriptArea').value.trim();
+  if(!t)return;
+  savedScripts.unshift({text:t,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+  renderSavedScripts();
+  document.getElementById('scriptArea').value='';
+  document.getElementById('scriptAI').classList.remove('show');
+}
+function clearScript(){document.getElementById('scriptArea').value='';document.getElementById('scriptAI').classList.remove('show')}
+function renderSavedScripts(){
+  const el=document.getElementById('savedScripts');
+  el.innerHTML=savedScripts.slice(0,4).map(s=>`<div class="saved-script-item"><span class="saved-date">${s.date}</span>${s.text.length>200?s.text.slice(0,200)+'…':s.text}</div>`).join('');
+}
+async function amplifyScript(){
+  const t=document.getElementById('scriptArea').value.trim();
+  if(!t)return;
+  const el=document.getElementById('scriptAI');
+  el.classList.add('show');
+  el.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`You are ROM — Reflections of Me. Read the manifestation script and write back an elevated version (90–110 words) in first person, past tense, as if it has fully materialised. Use vivid sensory detail, deep gratitude, and expansive joy. Make it feel undeniably real. No lists, no headers — pure flowing prose.`,
+        messages:[{role:'user',content:t}]
+      })
+    });
+    const d=await r.json();
+    el.textContent=d.content?.map(c=>c.text||'').join('')||t;
+  }catch(e){el.textContent='Your vision is weaving itself into reality. Every word you wrote is a seed already sprouting.'}
+}
+
+// ══════════════════════════════════════════════════════════
+//  GRATITUDE
+// ══════════════════════════════════════════════════════════
+let grats=[];
+function addGrat(){
+  const f=document.getElementById('gratField');
+  const t=f.value.trim();if(!t)return;
+  grats.unshift(t);f.value='';renderGrats();
+}
+function delGrat(i){grats.splice(i,1);renderGrats()}
+function renderGrats(){
+  const el=document.getElementById('gratList');
+  el.innerHTML=grats.slice(0,10).map((g,i)=>`<div class="gratitude-item"><span class="g-num">${i+1}</span><span class="g-text">${g}</span><button class="g-del" onclick="delGrat(${i})">×</button></div>`).join('');
+}
+async function aiGratitude(){
+  if(!grats.length)return;
+  const el=document.getElementById('gratAI');
+  el.classList.add('show');
+  el.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`You are ROM — Reflections of Me. Look at what this soul is grateful for and reflect back a warm, luminous message (60–80 words) that deepens their gratitude, elevates their vibration, and reminds them of the abundant life they are living. Pure flowing prose. No lists.`,
+        messages:[{role:'user',content:`I am grateful for:\n${grats.slice(0,8).map((g,i)=>`${i+1}. ${g}`).join('\n')}`}]
+      })
+    });
+    const d=await r.json();
+    el.textContent=d.content?.map(c=>c.text||'').join('')||'You are so abundantly blessed. Can you feel it?';
+  }catch(e){el.textContent='Your gratitude raises the frequency of everything around you. You are a blessing to this world.'}
+}
+
+// ══════════════════════════════════════════════════════════
+//  MOON
+// ══════════════════════════════════════════════════════════
+const moonData={
+  new:{ritual:'The new moon is a blank canvas held open by the cosmos. Tonight, write your three deepest desires on paper with a golden pen or candlelight. Hold them to your heart, whisper them to the stars, then fold the paper and tuck it beneath your pillow or a crystal. Plant seeds with full knowing — what you call in is already answering.',crystal:'✦ Crystal allies: Labradorite · Black Moonstone · Clear Quartz'},
+  waxing:{ritual:'The waxing moon builds momentum like a tide rising toward fullness. This is your time to take aligned, courageous action toward your intentions. Visualise your goal as already fulfilled and feel the emotions flood your body. Then take one bold, intentional step today — the universe rewards souls in motion.',crystal:'✦ Crystal allies: Citrine · Green Aventurine · Carnelian'},
+  full:{ritual:'The full moon amplifies everything — your power, your clarity, your magic. Charge your crystals beneath her light tonight. Write what you are ready to release on paper and safely burn it, or dissolve it in water while speaking your freedom aloud. Then stand beneath the moon, arms wide, and receive her luminous charge.',crystal:'✦ Crystal allies: Selenite · Rose Quartz · Moonstone'},
+  waning:{ritual:'The waning moon calls you gently inward for release and restoration. A ritual salt bath tonight will cleanse your aura of what is ready to leave. Journal what patterns, fears, or stories you are now willing to set down. Close with the words: "I release this with love and gratitude. I am free." And so it is.',crystal:'✦ Crystal allies: Amethyst · Smoky Quartz · Black Tourmaline'},
+};
+function selectMoon(phase,el){
+  document.querySelectorAll('.moon-card').forEach(m=>m.classList.remove('sel'));
+  el.classList.add('sel');
+  const md=moonData[phase];
+  document.getElementById('moonRitual').textContent=md.ritual;
+  document.getElementById('moonCrystal').textContent=md.crystal;
+  const w=document.getElementById('moonWisdom');
+  w.classList.add('show');
+}
+
+// ══════════════════════════════════════════════════════════
+//  CHAKRAS
+// ══════════════════════════════════════════════════════════
+const chakras=[
+  {name:'Root',skt:'Mūlādhāra',color:'#C0392B',info:'The foundation of your entire energetic body. When balanced: safety, stability, and a deep sense of belonging.',affirm:'"I am safe. I am grounded. The earth holds me."'},
+  {name:'Sacral',skt:'Svādhiṣṭhāna',color:'#E67E22',info:'The seat of creativity, pleasure, and emotional flow. When balanced: joy, sensuality, and inspired creative expression.',affirm:'"I flow freely. I create with ease and delight."'},
+  {name:'Solar Plexus',skt:'Maṇipūra',color:'#F1C40F',info:'Your personal power, confidence, and will. When balanced: courage, purpose, and a healthy sense of self.',affirm:'"I am powerful. I act with intention and clarity."'},
+  {name:'Heart',skt:'Anāhata',color:'#27AE60',info:'The bridge between body and spirit — the home of love and compassion. When balanced: deep connection and unconditional love.',affirm:'"I give and receive love freely and fully."'},
+  {name:'Throat',skt:'Viśuddha',color:'#2980B9',info:'Authentic expression and sacred truth-telling. When balanced: clear communication and the courage to speak your truth.',affirm:'"I speak my truth. My voice is sacred and worthy."'},
+  {name:'Third Eye',skt:'Ājñā',color:'#8E44AD',info:'The centre of intuition, vision, and inner knowing. When balanced: deep insight, clarity of mind, and spiritual perception.',affirm:'"I trust my inner vision. I see clearly with love."'},
+  {name:'Crown',skt:'Sahasrāra',color:'#BDC3C7',info:'Your connection to the divine, the cosmos, and universal consciousness. When balanced: oneness, transcendence, and spiritual bliss.',affirm:'"I am one with all that is. I am divinely guided."'},
+];
+function renderChakras(){
+  document.getElementById('chakraList').innerHTML=chakras.map((c,i)=>`
+    <div class="chakra-row-item">
+      <div class="chakra-header" id="ch-h-${i}" onclick="toggleChakra(${i})">
+        <div class="chakra-orb" style="background:${c.color};color:${c.color};"></div>
+        <span class="chakra-label">${c.name}</span>
+        <span class="chakra-skt">${c.skt}</span>
+        <span class="chakra-expand">▾</span>
+      </div>
+      <div class="chakra-body" id="ch-b-${i}">${c.info}<div class="chakra-affirm">${c.affirm}</div></div>
+    </div>`).join('');
+}
+function toggleChakra(i){
+  const h=document.getElementById('ch-h-'+i),b=document.getElementById('ch-b-'+i);
+  const isOpen=b.classList.contains('open');
+  document.querySelectorAll('.chakra-body').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.chakra-header').forEach(x=>x.classList.remove('open'));
+  if(!isOpen){b.classList.add('open');h.classList.add('open')}
+}
+
+// ══════════════════════════════════════════════════════════
+//  NUMEROLOGY
+// ══════════════════════════════════════════════════════════
+const numData={
+  1:{name:'The Pioneer · Life Path 1',path:'You carry the frequency of new beginnings and bold independence. Your soul came here to forge original paths, lead with authenticity, and inspire others through your unwavering self-belief.',exp:'Your expression vibrates with leadership and creative originality. You are most alive when initiating and pioneering new ground.',soul:'Your soul urges you toward independence and self-reliance. Deep inside, you long to stand completely in your own sovereign power.'},
+  2:{name:'The Peacemaker · Life Path 2',path:'You are a sacred bridge between worlds, gifted with intuition, diplomacy, and profound empathy. Your path is one of harmony, cooperation, and teaching others the art of truly seeing one another.',exp:'Your expression gifts you with grace, sensitivity, and an almost psychic ability to understand what others need before they speak.',soul:'Your soul longs for partnership, unity, and the deep peace that comes from harmonious connection.'},
+  3:{name:'The Creator · Life Path 3',path:'Joy, creativity, and inspired self-expression are woven through your very being. You came here to communicate beauty, spark delight in others, and remind a sometimes serious world that magic is real.',exp:'Your expression radiates with artistic flair, wit, and an infectious enthusiasm that lights up every room you enter.',soul:'Your soul urges you toward creative self-expression. You are most alive when you are making, sharing, and celebrating beauty.'},
+  4:{name:'The Architect · Life Path 4',path:'You are the sacred builder — grounded, disciplined, and deeply trustworthy. Your soul came to establish lasting foundations, master the material world, and create things of enduring beauty and purpose.',exp:'Your expression is marked by precision, reliability, and a remarkable ability to turn ambitious visions into concrete reality.',soul:'Your soul longs for stability, order, and the deep satisfaction of building something real that outlasts you.'},
+  5:{name:'The Free Spirit · Life Path 5',path:'Adventure, freedom, and transformation are written into your soul\'s DNA. You came to experience the full breathtaking spectrum of life and share the hard-won wisdom of someone who has truly lived.',exp:'Your expression is electric, versatile, and magnetic — you communicate change itself, and others feel alive in your presence.',soul:'Your soul craves freedom, variety, and the exhilarating feeling of being fully, wildly alive.'},
+  6:{name:'The Nurturer · Life Path 6',path:'Love, beauty, and sacred responsibility flow through you like a river. Your soul finds its highest expression in service, healing, and weaving harmony into the spaces and relationships around you.',exp:'Your expression carries the frequency of care, beauty, and unconditional love — you naturally make the world more beautiful.',soul:'Your soul longs to love deeply and be deeply loved — and to create a world that is safe, beautiful, and whole for those you cherish.'},
+  7:{name:'The Mystic · Life Path 7',path:'You walk between the seen and unseen worlds. A seeker of truth and keeper of sacred mystery, your path is one of spiritual depth, profound introspection, and sharing what you uncover with the world.',exp:'Your expression holds an unusual depth and originality — you communicate from a place of interior richness that few ever touch.',soul:'Your soul urges you toward solitude, contemplation, and the relentless pursuit of truth beyond all surface appearances.'},
+  8:{name:'The Manifestor · Life Path 8',path:'Power, material mastery, and worldly abundance are woven into your frequency. You came to learn that true wealth flows effortlessly from the alignment of spiritual integrity with bold, purposeful ambition.',exp:'Your expression commands authority and inspires confidence — when you speak of possibility, people believe it can be done.',soul:'Your soul longs to achieve, to build something powerful, and to experience the full richness of what material life can offer.'},
+  9:{name:'The Wise Elder · Life Path 9',path:'You carry the wisdom of countless lifetimes in the quiet of your being. Compassion, completion, and visionary humanitarian love are your greatest gifts — you are here to love the world into wholeness.',exp:'Your expression carries the gravity of someone who has seen much and understands even more — you communicate universal truths.',soul:'Your soul longs to serve, to heal, and to leave the world measurably more beautiful than you found it.'},
+  11:{name:'Master Number 11 · The Illuminator',path:'You are a rare spiritual messenger carrying the doubled power of 1 — intuition amplified to near-psychic intensity. Your purpose is to hold the light so steadily that others find their way by your radiance.',exp:'Your expression is visionary and inspirational — when you speak from your highest self, you genuinely change lives.',soul:'Your soul longs to illuminate, to be a channel for something greater than itself, and to remind others of their divine nature.'},
+  22:{name:'Master Number 22 · The Master Builder',path:'You hold the highest material power in numerology — the dream of 11 married to the capability to manifest it in the physical world. You are here to build something that outlasts you and blesses thousands.',exp:'Your expression combines grand vision with extraordinary practical capability — few can see what you see and then actually build it.',soul:'Your soul longs to leave a legacy so enduring and so beautiful that its effects ripple forward through generations.'},
+  33:{name:'Master Number 33 · The Master Teacher',path:'The rarest and most sacred of all numbers. You carry the energy of unconditional, selfless love and you are here to uplift humanity itself through the power of compassionate truth and joyful service.',exp:'Your expression is a living transmission of love — when you show up fully, people are healed simply by being near you.',soul:'Your soul longs to love without limit, to teach by being, and to experience the bliss of complete union with the divine.'},
+};
+function calcNum(){
+  const name=document.getElementById('numName').value.trim().toUpperCase();
+  const result=document.getElementById('numResult');
+  if(name.length<2){result.classList.remove('show');return}
+  const map={A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8};
+  const vowels='AEIOU';
+  const sum=name.split('').reduce((a,c)=>a+(map[c]||0),0);
+  const expSum=sum;
+  const soulSum=name.split('').reduce((a,c)=>a+(vowels.includes(c)?map[c]||0:0),0);
+  function red(n){if([11,22,33].includes(n))return n;if(n>9)return red(n.toString().split('').reduce((a,d)=>a+parseInt(d),0));return n;}
+  const life=red(sum),exp=red(expSum),soul=red(soulSum);
+  const info=numData[life]||numData[9];
+  document.getElementById('lifeNum').textContent=life;
+  document.getElementById('lifeLabel').textContent=info.name;
+  document.getElementById('pathMeaning').textContent=info.path;
+  document.getElementById('expMeaning').textContent=(numData[exp]||numData[9]).exp;
+  document.getElementById('soulMeaning').textContent=(numData[soul]||numData[9]).soul;
+  result.classList.add('show');
+}
+function showNumTab(tab,btn){
+  document.querySelectorAll('.num-tab-content').forEach(t=>t.classList.remove('show'));
+  document.querySelectorAll('#numerology .tag-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('show');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════
+//  MALA
+// ══════════════════════════════════════════════════════════
+let mCount=0,mRounds=0;
+const MALA=108;
+function renderBeads(){
+  document.getElementById('beadsGrid').innerHTML=Array.from({length:MALA},(_,i)=>
+    `<div class="bead${i<mCount?' lit':''}"></div>`).join('');
+}
+function tapBead(){
+  if(mCount>=MALA)return;
+  mCount++;
+  document.getElementById('malaNum').textContent=mCount;
+  document.getElementById('malaSub').textContent=`${mCount} / ${MALA} beads`;
+  renderBeads();
+  if(mCount===MALA)setTimeout(finishRound,400);
+}
+function resetMala(){mCount=0;document.getElementById('malaNum').textContent=0;document.getElementById('malaSub').textContent='0 / 108 beads';renderBeads()}
+function finishRound(){
+  mRounds++;mCount=0;
+  document.getElementById('malaNum').textContent=0;
+  document.getElementById('malaSub').textContent='0 / 108 beads';
+  document.getElementById('malaRounds').textContent=`✦ ${mRounds} sacred round${mRounds>1?'s':''} completed`;
+  renderBeads();
+}
+
+// ══════════════════════════════════════════════════════════
+//  SOUND BATH
+// ══════════════════════════════════════════════════════════
+const sounds=[
+  {label:'396 Hz',note:'Liberation',icon:'◉',freq:396,color:'#C0392B',desc:'Release fear & guilt'},
+  {label:'417 Hz',note:'Change',icon:'◈',freq:417,color:'#E67E22',desc:'Facilitate change'},
+  {label:'528 Hz',note:'Miracle',icon:'✦',freq:528,color:'#F1C40F',desc:'DNA repair & love'},
+  {label:'639 Hz',note:'Connection',icon:'❋',freq:639,color:'#27AE60',desc:'Harmonise relationships'},
+  {label:'741 Hz',note:'Clarity',icon:'◎',freq:741,color:'#2980B9',desc:'Awaken intuition'},
+  {label:'852 Hz',note:'Vision',icon:'⊕',freq:852,color:'#8E44AD',desc:'Return to spirit'},
+];
+let audioCtx=null,activeOscillators={};
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+function renderSounds(){
+  document.getElementById('soundGrid').innerHTML=sounds.map((s,i)=>`
+    <div class="sound-btn" id="snd-${i}" onclick="toggleSound(${i})">
+      <span class="sound-icon">${s.icon}</span>
+      <span class="sound-label">${s.label}</span>
+      <span class="sound-note">${s.note}</span>
+    </div>`).join('');
+}
+function toggleSound(i){
+  const s=sounds[i];const btn=document.getElementById('snd-'+i);
+  if(activeOscillators[i]){
+    activeOscillators[i].gain.gain.setTargetAtTime(0,getAudioCtx().currentTime,0.3);
+    setTimeout(()=>{try{activeOscillators[i].osc.stop()}catch(e){}delete activeOscillators[i]},600);
+    btn.classList.remove('playing');
+    document.getElementById('soundStatus').textContent='';
+  }else{
+    const ctx=getAudioCtx();
+    const osc=ctx.createOscillator();const gain=ctx.createGain();
+    osc.type='sine';osc.frequency.value=s.freq;
+    gain.gain.setValueAtTime(0,ctx.currentTime);
+    gain.gain.setTargetAtTime(0.15,ctx.currentTime,1.2);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start();activeOscillators[i]={osc,gain};
+    btn.classList.add('playing');
+    document.getElementById('soundStatus').textContent=`Now playing ${s.label} · ${s.note} · ${s.desc}`;
+  }
+}
+function stopAllSounds(){
+  Object.keys(activeOscillators).forEach(i=>{
+    activeOscillators[i].gain.gain.setTargetAtTime(0,getAudioCtx().currentTime,0.2);
+    setTimeout(()=>{try{activeOscillators[i].osc.stop()}catch(e){}},500);
+    document.getElementById('snd-'+i)?.classList.remove('playing');
+  });
+  activeOscillators={};
+  document.getElementById('soundStatus').textContent='';
+}
+
+// ══════════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════════
+let tSecs=1200,tRunning=false,tInterval;
+function setTimer(m){resetTimer();tSecs=m*60;updateTimerFace()}
+function updateTimerFace(){
+  const mm=String(Math.floor(tSecs/60)).padStart(2,'0');
+  const ss=String(tSecs%60).padStart(2,'0');
+  document.getElementById('timerFace').textContent=`${mm}:${ss}`;
+}
+function toggleTimer(){
+  const btn=document.getElementById('timerBtn');
+  if(!tRunning){
+    tRunning=true;btn.textContent='Pause';
+    document.getElementById('timerMsg').style.opacity='0';
+    tInterval=setInterval(()=>{
+      if(tSecs>0){tSecs--;updateTimerFace();}
+      else{clearInterval(tInterval);tRunning=false;btn.textContent='Begin';
+        const msg=document.getElementById('timerMsg');
+        msg.textContent='Your practice is complete. Return slowly, carrying this peace with you.';
+        msg.style.opacity='1';
+      }
+    },1000);
+  }else{tRunning=false;clearInterval(tInterval);btn.textContent='Resume';}
+}
+function resetTimer(){
+  clearInterval(tInterval);tRunning=false;
+  document.getElementById('timerBtn').textContent='Begin';
+  document.getElementById('timerMsg').style.opacity='0';
+  updateTimerFace();
+}
+updateTimerFace();
+
+
+// ======================================================
+//  7 KEYS TO LIFE
+// ======================================================
+const sevenKeys = [
+  {
+    num: 1,
+    title: 'Keys to Mindset',
+    password: 'mindset2024',
+    subtitle: 'Rewire the way you think',
+    color: '#C47B8A',
+    border: 'rgba(196,123,138,0.5)',
+    bg: 'rgba(196,123,138,0.08)',
+    description: 'Your mindset is the lens through which you experience every moment of your life. The overthinker knows this space intimately — the loops, the what-ifs, the spiral that starts at 2am and has no end. This key teaches you how to become the observer of your thoughts rather than their prisoner. You are not your mind. You are the awareness behind it.',
+    affirmation: '"My thoughts are not facts. I choose which ones I water, and which ones I release with love."',
+    affirmColor: 'rgba(196,123,138,0.15)',
+    affirmBorder: 'rgba(196,123,138,0.5)',
+    affirmText: 'rgba(232,204,138,1)',
+    prompts: [
+      'What thought pattern shows up most when I am overwhelmed?',
+      'If my mind were a garden, what would I plant more of — and what would I pull out?',
+      'What would I do today if I fully trusted my own thinking?'
+    ]
+  },
+  {
+    num: 2,
+    title: 'Keys to Clarity',
+    password: 'clarity2024',
+    subtitle: 'Cut through the mental fog',
+    color: '#6B9EC4',
+    border: 'rgba(107,158,196,0.5)',
+    bg: 'rgba(107,158,196,0.08)',
+    description: 'Clarity is not the absence of questions — it is the presence of your own knowing beneath the noise. The overthinker often mistakes more information for more clarity, when what is truly needed is stillness and the courage to trust what is already clear. This key helps you distinguish between your wisdom and your worry.',
+    affirmation: '"I already know more than I think I do. My clarity grows stronger every time I choose to trust myself."',
+    affirmColor: 'rgba(107,158,196,0.12)',
+    affirmBorder: 'rgba(107,158,196,0.5)',
+    affirmText: 'rgba(232,204,138,1)',
+    prompts: [
+      'Where in my life am I overcomplicating something that is actually simple?',
+      'What do I already know deep down that I have been avoiding acting on?',
+      'What decision would I make if I was not afraid of being wrong?'
+    ]
+  },
+  {
+    num: 3,
+    title: 'Keys to Knowing Your Worth',
+    password: 'myworth2024',
+    subtitle: 'Remember who you are',
+    color: '#D4AF6A',
+    border: 'rgba(212,175,106,0.6)',
+    bg: 'rgba(212,175,106,0.08)',
+    description: 'Worth is not earned, it is remembered. The overthinker often loops on whether they are enough — enough to be loved, chosen, respected, or seen. This key is an invitation to stop auditing your value and start inhabiting it. You were born worthy. Nothing that has happened since has changed that fundamental truth.',
+    affirmation: '"My worth is not up for debate. I do not need to earn my place — I was born deserving it."',
+    affirmColor: 'rgba(212,175,106,0.1)',
+    affirmBorder: 'rgba(212,175,106,0.6)',
+    affirmText: 'rgba(232,204,138,1)',
+    prompts: [
+      'When did I first learn to question my worth — and whose voice taught me that?',
+      'What would I do, say, or ask for today if I knew I was fully worthy of it?',
+      'How would I treat myself differently if I truly believed I was enough, right now?'
+    ]
+  },
+  {
+    num: 4,
+    title: 'Keys to Confidence',
+    password: 'confidence2024',
+    subtitle: 'Act before you feel ready',
+    color: '#C49B6B',
+    border: 'rgba(196,155,107,0.5)',
+    bg: 'rgba(196,155,107,0.08)',
+    description: 'Confidence is not the absence of doubt — it is the decision to move forward anyway. The overthinker waits to feel ready, not realizing that readiness is a feeling that follows action, not one that precedes it. This key teaches you that confidence is built one courageous micro-decision at a time, and that you already have everything you need to begin.',
+    affirmation: '"I do not need to feel confident to act confidently. Every step I take builds the proof I am looking for."',
+    affirmColor: 'rgba(196,155,107,0.1)',
+    affirmBorder: 'rgba(196,155,107,0.5)',
+    affirmText: 'rgba(232,204,138,1)',
+    prompts: [
+      'What have I been waiting to feel ready for — and how long have I been waiting?',
+      'What is the smallest possible action I could take today that would feel brave?',
+      'Who am I when I am not performing for anyone — and what does that person want?'
+    ]
+  },
+  {
+    num: 5,
+    title: 'Keys to Speaking Up',
+    password: 'speakup2024',
+    subtitle: 'Your voice is a sacred instrument',
+    color: '#9B8FC4',
+    border: 'rgba(155,143,196,0.5)',
+    bg: 'rgba(155,143,196,0.08)',
+    description: 'The overthinker often rehearses conversations a hundred times before speaking — and sometimes never speaks at all. Your voice carries frequencies of truth that the world is waiting to receive. This key is about reclaiming your right to take up space, to disagree, to need things, to be heard. Silence has its own cost, and you know it intimately.',
+    affirmation: '"My voice deserves to be heard. When I speak my truth with love, I give others permission to do the same."',
+    affirmColor: 'rgba(155,143,196,0.12)',
+    affirmBorder: 'rgba(155,143,196,0.5)',
+    affirmText: 'rgba(232,204,138,1)',
+    prompts: [
+      'What have I been holding back from saying — and what am I afraid will happen if I say it?',
+      'Where in my life am I shrinking to make others comfortable at my own expense?',
+      'What would I say if I knew the person I am speaking to could handle my full truth?'
+    ]
+  },
+  {
+    num: 6,
+    title: 'Keys to Trusting Yourself',
+    password: 'trustme2024',
+    subtitle: 'Come home to your own knowing',
+    color: '#7BA68A',
+    border: 'rgba(123,166,138,0.5)',
+    bg: 'rgba(123,166,138,0.08)',
+    description: 'Self-trust is the deepest form of faith you can practice. For the overthinker, self-doubt has become a default setting — second-guessing every instinct, outsourcing every decision, waiting for external confirmation of what you already know inside. This key helps you rebuild the relationship with your own inner compass, one small act of self-trust at a time.',
+    affirmation: '"I trust myself. My gut has protected me, guided me, and never truly failed me. I choose to listen."',
+    affirmColor: 'rgba(123,166,138,0.1)',
+    affirmBorder: 'rgba(123,166,138,0.5)',
+    affirmText: 'rgba(232,204,138,1)',
+    prompts: [
+      'When did I last override my gut instinct — and what happened?',
+      'What would self-trust look like in my body right now, in this moment?',
+      'What is one decision I have been outsourcing to others that I actually know the answer to?'
+    ]
+  },
+  {
+    num: 7,
+    title: 'Keys to Transformation',
+    password: 'transform2024',
+    subtitle: 'Become who you already are',
+    color: '#E8CC8A',
+    border: 'rgba(232,204,138,0.5)',
+    bg: 'rgba(232,204,138,0.06)',
+    description: 'Transformation is not about becoming someone new — it is about shedding everything that was never truly you. The overthinker often imagines transformation as a dramatic before-and-after, when in reality it is the accumulation of a thousand quiet choices to show up differently. This final key integrates all that came before it and asks: who are you becoming, and are you willing to let her lead?',
+    affirmation: '"I am not who I was. I am not yet who I am becoming. I am in the sacred space of becoming — and this is exactly where I am meant to be."',
+    affirmColor: 'rgba(232,204,138,0.08)',
+    affirmBorder: 'rgba(232,204,138,0.5)',
+    affirmText: 'rgba(232,204,138,1)',
+    prompts: [
+      'Who have I been pretending to be — and who am I when I stop pretending?',
+      'What version of myself am I most afraid of becoming? What version am I most excited by?',
+      'If my life one year from now is exactly how I want it — what one thing had to change today?'
+    ]
+  }
+];
+
+// Per-key unlock state (persists for the session)
+const keyUnlocked = JSON.parse(sessionStorage.getItem('rom_keys') || '{}');
+
+function saveKeyState() {
+  sessionStorage.setItem('rom_keys', JSON.stringify(keyUnlocked));
+}
+
+function renderKeys() {
+  const grid = document.getElementById('keysGrid');
+  if (!grid) return;
+  grid.innerHTML = sevenKeys.map((k, i) => {
+    const unlocked = !!keyUnlocked[i];
+    return `
+    <div class="key-card" id="key-${i}">
+      <div class="key-card-header" onclick="toggleKey(${i})">
+        <div class="key-num" style="background:${k.bg};border:1px solid ${k.border};color:${k.color};">${k.num}</div>
+        <div style="flex:1;">
+          <div class="key-title" style="color:${k.color};">${k.title}</div>
+          <div class="key-subtitle">${k.subtitle}</div>
+        </div>
+        <span style="font-size:13px;color:var(--gold);opacity:${unlocked ? '0.35' : '0.5'};">${unlocked ? '&#9662;' : '&#128274;'}</span>
+      </div>
+      ${unlocked ? renderKeyContent(k, i) : renderKeyLocked(k, i)}
+    </div>`;
+  }).join('');
+}
+
+function renderKeyContent(k, i) {
+  return `
+    <div class="key-body" id="key-body-${i}">
+      <div class="key-body-inner">
+        <div class="key-description">${k.description}</div>
+        <div class="key-affirmation" style="background:${k.affirmColor};border-color:${k.affirmBorder};color:${k.affirmText};">${k.affirmation}</div>
+        <div class="key-prompts-label">Journal Prompts</div>
+        <div class="key-prompts">
+          ${k.prompts.map(p => `<div class="key-prompt" onclick="usePrompt(${i}, '${p.replace(/'/g,"&#39;")}')" style="cursor:pointer;">${p}</div>`).join('')}
+        </div>
+        <textarea class="key-journal" id="key-journal-${i}" placeholder="Write freely here… tap a prompt above to begin, or follow your own truth."></textarea>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="key-ai-btn" onclick="getKeyCoaching(${i})" style="border-color:${k.border};color:${k.color};">&#10022; ROM Coaching on This Key</button>
+        </div>
+        <div class="key-ai-response" id="key-ai-${i}"></div>
+      </div>
+    </div>`;
+}
+
+function renderKeyLocked(k, i) {
+  const teaser = k.description.slice(0, 110) + '…';
+  return `
+    <div class="key-body" id="key-body-${i}">
+      <div class="key-teaser">${teaser}</div>
+      <div class="key-lock-wall" id="key-wall-${i}">
+        <span class="key-lock-icon">&#128274;</span>
+        <p class="key-lock-msg">This key is reserved for clients who have unlocked this stage of their journey.<br>Enter your unique access key below.</p>
+        <div class="key-lock-input-wrap">
+          <input class="key-lock-input" id="key-pw-${i}" type="password"
+            placeholder="Your access key…"
+            onkeydown="if(event.key==='Enter')unlockKey(${i})"
+            autocomplete="off" />
+          <button class="key-lock-btn" onclick="unlockKey(${i})">Unlock</button>
+        </div>
+        <div class="key-lock-error" id="key-pw-err-${i}">That key does not match. Please check with Dr. Kee.</div>
+      </div>
+    </div>`;
+}
+
+function toggleKey(i) {
+  const body = document.getElementById('key-body-' + i);
+  const card = document.getElementById('key-' + i);
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.key-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.key-card').forEach(c => {
+    c.classList.remove('open');
+    c.style.borderColor = 'rgba(212,175,106,0.12)';
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    card.classList.add('open');
+    card.style.borderColor = sevenKeys[i].border;
+    setTimeout(() => body.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    // Auto-focus password input if locked
+    const pwInput = document.getElementById('key-pw-' + i);
+    if (pwInput) setTimeout(() => pwInput.focus(), 350);
+  }
+}
+
+function unlockKey(i) {
+  const input = document.getElementById('key-pw-' + i);
+  const errEl = document.getElementById('key-pw-err-' + i);
+  const val = input ? input.value.trim() : '';
+  const k = sevenKeys[i];
+
+  if (val.toLowerCase() === k.password.toLowerCase()) {
+    // ✓ Correct — unlock and re-render this card
+    keyUnlocked[i] = true;
+    saveKeyState();
+    const card = document.getElementById('key-' + i);
+    card.classList.add('key-unlocked-flash');
+    // Rebuild card content with full access
+    const body = document.getElementById('key-body-' + i);
+    body.innerHTML = renderKeyContent(k, i).replace(/<div class="key-body"[^>]*>/, '').replace(/<\/div>$/, '');
+    body.classList.add('open');
+    card.style.borderColor = k.border;
+    // Update lock icon to arrow
+    const iconSpan = card.querySelector('.key-card-header span:last-child');
+    if (iconSpan) { iconSpan.innerHTML = '&#9662;'; iconSpan.style.opacity = '0.35'; }
+  } else {
+    // ✗ Wrong — shake and show error
+    if (input) {
+      input.classList.add('shake');
+      input.value = '';
+      setTimeout(() => input.classList.remove('shake'), 450);
+    }
+    if (errEl) { errEl.classList.add('show'); }
+  }
+}
+
+function usePrompt(keyIdx, prompt) {
+  const ta = document.getElementById('key-journal-' + keyIdx);
+  if (ta) { ta.value = prompt + ' '; ta.focus(); }
+}
+
+async function getKeyCoaching(i) {
+  const key = sevenKeys[i];
+  const journal = document.getElementById('key-journal-' + i).value.trim();
+  const el = document.getElementById('key-ai-' + i);
+  el.classList.add('show');
+  el.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+  const context = journal ? `Their journal reflection: "${journal}"` : `They are exploring this key for the first time.`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are ROM — Reflections of Me — a warm, wise, and deeply personal life coach specializing in the 7 Keys to Life framework. You have a gift for speaking directly to the overthinker: the person who knows everything intellectually but struggles to embody their own wisdom. Your coaching is specific, soulful, and never generic. You speak in second person with warmth and directness. 80-100 words. No bullet points. No headers. Pure prose.`,
+        messages: [{
+          role: 'user',
+          content: `I am working on: ${key.title} — "${key.subtitle}". ${context} Please offer me a personalized coaching insight for where I am right now.`
+        }]
+      })
+    });
+    const d = await r.json();
+    el.textContent = d.content?.map(c => c.text || '').join('') || 'You are further along than you think. Keep going.';
+  } catch(e) {
+    el.textContent = 'Every key you turn opens something that was already yours. Trust the process.';
+  }
+}
+
+function bookCoaching(e) {
+  e.preventDefault();
+  // Replace this URL with your actual booking link
+  const bookingUrl = 'https://your-booking-link.com';
+  alert('\u2728 Thank you for choosing to invest in yourself.\n\nTo complete this integration, replace the booking URL in the code with your actual scheduling link (e.g. Calendly, Acuity, or your own page).\n\nYour transformation is already in motion. \u2728');
+}
+
+// ══════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+
+// ══════════════════════════════════════════════════════════
+//  DR. KEE PHOTO UPLOAD
+// ══════════════════════════════════════════════════════════
+function loadDrkeePhoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const wrap = document.getElementById('drkeePhotoWrap');
+    wrap.innerHTML = '<img src="' + e.target.result + '" alt="Dr. Kee" />';
+  };
+  reader.readAsDataURL(file);
+}
+</script>
+</body>
+</html>
